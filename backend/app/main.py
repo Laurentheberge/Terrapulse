@@ -7,7 +7,12 @@ from app.routers import auth, hotspots, reports, sites
 
 app = FastAPI(title="TerraPulse AI")
 
-origins = ["http://localhost:5173", "http://localhost:4173"]
+origins = [
+    "http://localhost:5173",
+    "http://localhost:4173",
+    "https://hackartonic.web.app",
+    "https://hackartonic.firebaseapp.com",
+]
 if os.environ.get("ALLOWED_ORIGINS"):
     origins.extend(o.strip() for o in os.environ["ALLOWED_ORIGINS"].split(","))
 
