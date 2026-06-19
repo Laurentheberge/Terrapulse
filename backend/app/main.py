@@ -1,28 +1,29 @@
 import os
 from fastapi import FastAPI
-from fastapi.middleware.cors import CORSMiddleware
+from starlette.responses import PlainTextResponse
 
 from app.firebase import db
 from app.routers import auth, hotspots, reports, sites
 
 app = FastAPI(title="TerraPulse AI")
 
-origins = [
-    "http://localhost:5173",
-    "http://localhost:4173",
-    "https://hackartonic.web.app",
-    "https://hackartonic.firebaseapp.com",
-]
-if os.environ.get("ALLOWED_ORIGINS"):
-    origins.extend(o.strip() for o in os.environ["ALLOWED_ORIGINS"].split(","))
 
-app.add_middleware(
-    CORSMiddleware,
-    allow_origins=origins,
-    allow_credentials=True,
-    allow_methods=["*"],
-    allow_headers=["*"],
-)
+@app.middleware("http")
+async def cors_middleware(request, call_next):
+    try:
+        response = await call_next(request)
+    except Exception as e:
+        response = PlainTextResponse(str(e), status_code=500)
+    origin = request.headers.get("origin", "")
+    if origin:
+        response.headers["Access-Control-Allow-Origin"] = origin
+    response.headers["Access-Control-Allow-Credentials"] = "true"
+    response.headers["Access-Control-Allow-Methods"] = "GET, POST, PATCH, DELETE, OPTIONS"
+    response.headers["Access-Control-Allow-Headers"] = "Content-Type, Authorization"
+    if request.method == "OPTIONS":
+        return PlainTextResponse("", status_code=200, headers=dict(response.headers))
+    return response
+
 
 app.include_router(auth.router)
 app.include_router(reports.router)
@@ -36,8 +37,8 @@ def health():
 
 @app.get("/debug/reports-count")
 def debug_reports_count():
-    docs = list(db.collection("reports").stream())
-    return {
-        "total": len(docs),
-        "sample_ids": [d.id for d in docs[:5]],
-    }
+    try:
+        docs = list(db.collection("reports").stream())
+        return {"total": len(docs), "sample_ids": [d.id for d in docs[:5]]}
+    except Exception as e:
+        return {"error": str(e)}
