@@ -1,3 +1,4 @@
+import json
 import os
 
 import firebase_admin
@@ -6,23 +7,26 @@ from dotenv import load_dotenv
 
 load_dotenv()
 
-FIREBASE_KEY_PATH = os.path.join(os.path.dirname(__file__), "..", "firebase-key.json")
+key_paths = [
+    os.path.join(os.path.dirname(__file__), "..", "firebase-key.json"),
+    "/etc/secrets/firebase-key.json",
+]
 
-if os.path.exists(FIREBASE_KEY_PATH):
-    cred = credentials.Certificate(FIREBASE_KEY_PATH)
-else:
-    FIREBASE_PRIVATE_KEY = os.environ["FIREBASE_PRIVATE_KEY"].replace("\\n", "\n")
+cred = None
+for path in key_paths:
+    if os.path.exists(path):
+        cred = credentials.Certificate(path)
+        break
+
+if cred is None:
+    raw_key = os.environ.get("FIREBASE_PRIVATE_KEY", "")
+    raw_key = raw_key.replace("\\n", "\n")
     cred = credentials.Certificate({
         "type": "service_account",
-        "project_id": os.environ["FIREBASE_PROJECT_ID"],
-        "private_key": FIREBASE_PRIVATE_KEY,
-        "client_email": os.environ["FIREBASE_CLIENT_EMAIL"],
+        "project_id": os.environ.get("FIREBASE_PROJECT_ID", ""),
+        "private_key": raw_key,
+        "client_email": os.environ.get("FIREBASE_CLIENT_EMAIL", ""),
         "token_uri": "https://oauth2.googleapis.com/token",
-        "auth_uri": "https://accounts.google.com/o/oauth2/auth",
-        "auth_provider_x509_cert_url": "https://www.googleapis.com/oauth2/v1/certs",
-        "client_id": "",
-        "client_x509_cert_url": f"https://www.googleapis.com/robot/v1/metadata/x509/{os.environ['FIREBASE_CLIENT_EMAIL']}",
-        "private_key_id": "",
     })
 
 firebase_admin.initialize_app(cred)
