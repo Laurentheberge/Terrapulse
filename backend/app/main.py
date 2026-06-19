@@ -9,7 +9,7 @@ app = FastAPI(title="TerraPulse AI")
 
 origins = ["http://localhost:5173", "http://localhost:4173"]
 if os.environ.get("ALLOWED_ORIGINS"):
-    origins.extend(os.environ["ALLOWED_ORIGINS"].split(","))
+    origins.extend(o.strip() for o in os.environ["ALLOWED_ORIGINS"].split(","))
 
 app.add_middleware(
     CORSMiddleware,
