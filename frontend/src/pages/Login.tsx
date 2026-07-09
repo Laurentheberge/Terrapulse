@@ -1,22 +1,41 @@
 import { useState } from "react"
 import { Link, useNavigate } from "react-router-dom"
 import { signInWithEmailAndPassword } from "firebase/auth"
+import toast from "react-hot-toast"
 import { auth } from "../firebase"
 
 export default function Login() {
   const [email, setEmail] = useState("")
   const [password, setPassword] = useState("")
   const [error, setError] = useState("")
+  const [noAccount, setNoAccount] = useState(false)
+  const [loading, setLoading] = useState(false)
   const navigate = useNavigate()
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
+    setLoading(true); setError(""); setNoAccount(false)
+
+    const check = await fetch(`${import.meta.env.VITE_API_URL}/auth/check-email`, {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ email }),
+    }).then(r => r.json()).then(d => d.exists).catch(() => true)
+
+    if (!check) {
+      setNoAccount(true)
+      toast.error("No account found with this email.")
+      setLoading(false)
+      return
+    }
+
     try {
       await signInWithEmailAndPassword(auth, email, password)
       navigate("/")
-    } catch (err) {
-      setError(String(err).replace("Firebase: ", "").replace(/\(.*\)/, ""))
-    }
+    } catch {
+      setError("Wrong password.")
+      toast.error("Wrong password.")
+    } finally { setLoading(false) }
   }
 
   return (
@@ -37,7 +56,12 @@ export default function Login() {
         </div>
 
         <form onSubmit={handleSubmit} className="bg-white/95 dark:bg-gray-900/95 backdrop-blur-sm rounded-xl shadow-xl border border-white/10 dark:border-gray-700/50 p-6 space-y-4">
-          {error && (
+          {noAccount ? (
+            <div className="bg-amber-50 dark:bg-amber-900 text-amber-700 dark:text-amber-200 text-sm rounded-lg px-4 py-3">
+              No account found with this email.{" "}
+              <Link to="/register" className="font-semibold underline text-emerald-600 dark:text-emerald-400 hover:text-emerald-700">Create one</Link>
+            </div>
+          ) : error && (
             <div className="bg-red-50 dark:bg-red-900 text-red-700 dark:text-red-200 text-sm rounded-lg px-4 py-3">{error}</div>
           )}
 
@@ -67,9 +91,15 @@ export default function Login() {
 
           <button
             type="submit"
-            className="w-full bg-emerald-600 text-white py-2 px-4 rounded-lg text-sm font-medium hover:bg-emerald-700 transition-colors cursor-pointer"
+            disabled={loading}
+            className="w-full bg-emerald-600 text-white py-2 px-4 rounded-lg text-sm font-medium hover:bg-emerald-700 disabled:opacity-50 disabled:cursor-not-allowed transition-colors cursor-pointer flex items-center justify-center gap-2"
           >
-            Sign in
+            {loading ? (
+              <>
+                <div className="w-4 h-4 border-2 border-white border-t-transparent rounded-full animate-spin" />
+                Signing in...
+              </>
+            ) : "Sign in"}
           </button>
 
           <p className="text-center text-sm text-gray-500 dark:text-gray-400">

@@ -6,6 +6,17 @@ from app.firebase import auth as firebase_admin_auth
 
 router = APIRouter(prefix="/auth", tags=["auth"])
 
+class CheckEmailBody(BaseModel):
+    email: str
+
+@router.post("/check-email")
+def check_email(body: CheckEmailBody):
+    try:
+        firebase_admin_auth.get_user_by_email(body.email)
+        return {"exists": True}
+    except firebase_admin_auth.UserNotFoundError:
+        return {"exists": False}
+
 class SetRoleBody(BaseModel):
     role: str
 
