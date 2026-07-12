@@ -3,6 +3,7 @@ import toast from "react-hot-toast"
 import { auth } from "../firebase"
 import API from "../api"
 import ReportForm from "../components/ReportForm"
+import { optimizeImage } from "../image"
 
 interface Report {
   id: string
@@ -139,7 +140,7 @@ export default function Home() {
 
   return (
     <div className="min-h-screen relative">
-      <img src="https://images.unsplash.com/photo-1761252987156-8518404632cd?w=1600&q=80" alt="" className="absolute inset-0 w-full h-full object-cover" />
+      <img src="https://images.unsplash.com/photo-1761252987156-8518404632cd?w=800&q=60" alt="" className="absolute inset-0 w-full h-full object-cover" loading="lazy" />
       <div className="absolute inset-0 bg-gradient-to-br from-black/70 via-black/60 to-emerald-900/30 animate-gradient" />
       <div className="max-w-5xl mx-auto px-4 py-8 space-y-8 relative z-10">
       <div className="flex items-start justify-between animate-fade-in">
@@ -260,11 +261,11 @@ export default function Home() {
         ) : (
           <div className="space-y-3">
             {myReports.map((r, i) => (
-              <div key={r.id} className="bg-white dark:bg-gray-800 rounded-xl border border-gray-200 dark:border-gray-700 overflow-hidden hover:-translate-y-1 hover:shadow-lg transition-all animate-fade-in" style={{ animationDelay: `${i * 80}ms` }}>
+              <div key={r.id} className="bg-white dark:bg-gray-800 rounded-xl border border-gray-200 dark:border-gray-700 overflow-hidden hover:-translate-y-1 hover:shadow-lg transition-all animate-fade-in" style={{ animationDelay: `${i * 80}ms`, contentVisibility: "auto", containIntrinsicSize: "auto 6rem" }}>
                 <div className="flex">
                   {r.image_url && (
                     <div className="w-24 h-24 shrink-0 bg-gray-100 dark:bg-gray-700">
-                      <img src={r.image_url} alt="" className="w-full h-full object-cover" onError={(e) => { (e.target as HTMLImageElement).style.display = "none" }} />
+                      <img src={optimizeImage(r.image_url, 300)} alt="" className="w-full h-full object-cover" loading="lazy" decoding="async" onError={(e) => { (e.target as HTMLImageElement).style.display = "none" }} />
                     </div>
                   )}
                   <div className="flex-1 p-4 min-w-0">

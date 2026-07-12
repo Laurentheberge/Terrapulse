@@ -87,7 +87,7 @@ export default function DisposalSites() {
 
   return (
     <div className="min-h-[calc(100vh-4rem)] p-4 sm:p-6 relative overflow-hidden bg-gray-900"
-      style={{ backgroundImage: "url(https://images.unsplash.com/photo-1662611527358-7855c4fe8398?w=1600&q=80)", backgroundSize: "cover", backgroundPosition: "center" }}>
+      style={{ backgroundImage: "url(https://images.unsplash.com/photo-1662611527358-7855c4fe8398?w=800&q=60)", backgroundSize: "cover", backgroundPosition: "center" }}>
       <div className="absolute inset-0 bg-black/60" />
       <div className="max-w-7xl mx-auto relative z-10">
       <div className="mb-6 animate-fade-in">
@@ -103,7 +103,7 @@ export default function DisposalSites() {
 
       <div className="grid grid-cols-1 lg:grid-cols-5 gap-6">
         <div className="lg:col-span-3 bg-white dark:bg-gray-800 rounded-xl border border-gray-200 dark:border-gray-700 overflow-hidden h-[45vh] sm:h-[500px]">
-          <MapContainer center={userPos || [4.0511, 9.7679]} zoom={userPos ? 13 : 7} className="h-full w-full" scrollWheelZoom={true}>
+           <MapContainer center={userPos || [4.0511, 9.7679]} zoom={userPos ? 13 : 7} className="h-full w-full" scrollWheelZoom={true} preferCanvas={true} zoomSnap={0.5}>
             <TileLayer url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png" />
             {userPos && <Marker position={userPos} icon={userIcon} />}
             {displaySites.map((s) => (

@@ -2,6 +2,7 @@ import { useEffect, useState, useRef } from "react"
 import { MapContainer, TileLayer, Marker, Popup, useMap } from "react-leaflet"
 import L from "leaflet"
 import API from "../api"
+import { optimizeImage } from "../image"
 
 const severityColors: Record<string, string> = {
   high: "#dc2626",
@@ -132,7 +133,7 @@ export default function PublicMap() {
         </div>
       </div>
       <div className="flex-1 relative">
-        <MapContainer center={center} zoom={13} className="h-full w-full" scrollWheelZoom={true} key={center.join()}>
+        <MapContainer center={center} zoom={13} className="h-full w-full" scrollWheelZoom={true} preferCanvas={true} zoomSnap={0.5} key={center.join()}>
           <TileLayer url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png" />
           <LocateButton />
           <UserMarker />
@@ -149,7 +150,7 @@ export default function PublicMap() {
                     <span className={statusBadge(r.status)}>{r.status.replace("_", " ")}</span>
                   </div>
                   {r.image_url && (
-                    <img src={r.image_url} alt="" className="w-full h-28 object-cover rounded mb-2" onError={(e) => { (e.target as HTMLImageElement).style.display = "none" }} />
+                    <img src={optimizeImage(r.image_url, 300)} alt="" className="w-full h-28 object-cover rounded mb-2" loading="lazy" decoding="async" onError={(e) => { (e.target as HTMLImageElement).style.display = "none" }} />
                   )}
                   <p className="text-xs text-gray-600 dark:text-gray-400 mb-2">{r.address || "No description"}</p>
                   <div className="flex justify-between text-xs text-gray-400">

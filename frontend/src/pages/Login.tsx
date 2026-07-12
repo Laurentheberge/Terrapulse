@@ -78,7 +78,7 @@ export default function Login() {
 
   return (
     <div className="min-h-[calc(100vh-4rem)] flex items-center justify-center px-4 relative overflow-hidden bg-gray-900"
-      style={{ backgroundImage: "url(https://images.unsplash.com/photo-1542601906990-b4d3fb778b09?w=1600&q=80)", backgroundSize: "cover", backgroundPosition: "center" }}>
+      style={{ backgroundImage: "url(https://images.unsplash.com/photo-1542601906990-b4d3fb778b09?w=800&q=60)", backgroundSize: "cover", backgroundPosition: "center" }}>
       <div className="absolute inset-0 bg-black/60" />
       <div className="w-full max-w-sm relative z-10">
         <div className="text-center mb-8">

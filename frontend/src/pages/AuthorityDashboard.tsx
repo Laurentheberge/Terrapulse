@@ -4,6 +4,7 @@ import { MapContainer, TileLayer, Marker, Popup } from "react-leaflet"
 import L from "leaflet"
 import { auth } from "../firebase"
 import API from "../api"
+import { optimizeImage } from "../image"
 
 function createIcon(color: string, size = 20) {
   return L.divIcon({
@@ -65,6 +66,9 @@ export default function AuthorityDashboard() {
   const [promoteEmail, setPromoteEmail] = useState("")
   const [authorities, setAuthorities] = useState<{ uid: string; email: string }[]>([])
   const [isProtected, setIsProtected] = useState(false)
+  const [visibleCount, setVisibleCount] = useState(15)
+
+  useEffect(() => { setVisibleCount(15) }, [filterType, filterStatus])
 
   const load = useCallback(async () => {
     setLoading(true)
@@ -196,7 +200,7 @@ export default function AuthorityDashboard() {
 
   return (
     <div className="min-h-screen relative">
-      <img src="https://images.unsplash.com/photo-1668958728314-28cda6653610?w=1600&q=80" alt="" className="absolute inset-0 w-full h-full object-cover" />
+      <img src="https://images.unsplash.com/photo-1668958728314-28cda6653610?w=800&q=60" alt="" className="absolute inset-0 w-full h-full object-cover" loading="lazy" />
       <div className="absolute inset-0 bg-gradient-to-br from-black/70 via-black/60 to-emerald-900/30 animate-gradient" />
       <div className="p-4 sm:p-6 max-w-7xl mx-auto relative z-10">
       <div className="mb-6 animate-fade-in">
@@ -275,7 +279,7 @@ export default function AuthorityDashboard() {
             </button>
           </div>
           <div className="bg-white dark:bg-gray-800 rounded-xl border border-gray-200 dark:border-gray-700 overflow-hidden hover:shadow-lg transition-all h-[40vh] sm:h-[420px]">
-            <MapContainer center={[4.0511, 9.7679]} zoom={12} className="h-full w-full" scrollWheelZoom={true}>
+            <MapContainer center={[4.0511, 9.7679]} zoom={12} className="h-full w-full" scrollWheelZoom={true} preferCanvas={true} zoomSnap={0.5}>
               <TileLayer url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png" />
               {viewMode === "hotspots" ? (
                 hotspots.map((h) => (
@@ -306,7 +310,7 @@ export default function AuthorityDashboard() {
                           <span className="text-xs text-gray-400">Score: {r.environment_score}</span>
                         </div>
                         {r.image_url && (
-                          <img src={r.image_url} alt="" className="w-full h-24 object-cover rounded mb-1" onError={(e) => { (e.target as HTMLImageElement).style.display = "none" }} />
+                          <img src={optimizeImage(r.image_url, 200)} alt="" className="w-full h-24 object-cover rounded mb-1" loading="lazy" decoding="async" onError={(e) => { (e.target as HTMLImageElement).style.display = "none" }} />
                         )}
                         <p className="text-xs text-gray-500 dark:text-gray-400">{r.address || ""}</p>
                       </div>
@@ -373,12 +377,12 @@ export default function AuthorityDashboard() {
             ) : reports.length === 0 ? (
               <p className="text-sm text-gray-300 text-center py-8">No reports match your filters.</p>
             ) : (
-              reports.map((r, i) => (
-                <div key={r.id} className="bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-lg overflow-hidden hover:-translate-y-0.5 hover:shadow-md transition-all animate-fade-in" style={{ animationDelay: `${i * 60}ms` }}>
+              reports.slice(0, visibleCount).map((r, i) => (
+                <div key={r.id} className="bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-lg overflow-hidden hover:-translate-y-0.5 hover:shadow-md transition-all animate-fade-in" style={{ animationDelay: `${i * 60}ms`, contentVisibility: "auto", containIntrinsicSize: "auto 4rem" }}>
                   <div className="flex">
                     {r.image_url && (
                       <div className="w-16 h-16 shrink-0 bg-gray-100 dark:bg-gray-700">
-                        <img src={r.image_url} alt="" className="w-full h-full object-cover" onError={(e) => { (e.target as HTMLImageElement).style.display = "none" }} />
+                        <img src={optimizeImage(r.image_url, 150)} alt="" className="w-full h-full object-cover" loading="lazy" decoding="async" onError={(e) => { (e.target as HTMLImageElement).style.display = "none" }} />
                       </div>
                     )}
                     <div className="flex-1 p-3 min-w-0">
@@ -402,6 +406,14 @@ export default function AuthorityDashboard() {
                   </div>
                 </div>
               ))
+            )}
+            {reports.length > visibleCount && (
+              <button
+                onClick={() => setVisibleCount(c => c + 20)}
+                className="w-full py-2 mt-2 rounded-lg border border-dashed border-gray-500 text-gray-400 text-sm hover:text-white hover:border-white transition-all cursor-pointer active:scale-[0.98]"
+              >
+                Show {Math.min(20, reports.length - visibleCount)} more ({reports.length - visibleCount} remaining)
+              </button>
             )}
           </div>
         </div>

@@ -1,7 +1,7 @@
 export default function About() {
   return (
     <div className="min-h-[calc(100vh-4rem)] flex items-center justify-center px-4 relative overflow-hidden bg-gray-900"
-      style={{ backgroundImage: "url(https://images.unsplash.com/photo-1618477461853-cf6ed80faba5?w=1600&q=80)", backgroundSize: "cover", backgroundPosition: "center" }}>
+      style={{ backgroundImage: "url(https://images.unsplash.com/photo-1618477461853-cf6ed80faba5?w=800&q=60)", backgroundSize: "cover", backgroundPosition: "center" }}>
       <div className="absolute inset-0 bg-gradient-to-br from-black/70 via-black/60 to-emerald-900/30 animate-gradient" />
       <div className="w-full max-w-2xl relative z-10">
         <div className="text-center mb-8">

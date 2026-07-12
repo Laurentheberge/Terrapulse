@@ -198,7 +198,7 @@ export default function ReportForm({ onSuccess }: ReportFormProps) {
               Detecting your location...
             </div>
           )}
-          <MapContainer center={[lat, lng]} zoom={14} className="h-full w-full">
+          <MapContainer center={[lat, lng]} zoom={14} className="h-full w-full" preferCanvas={true}>
             <TileLayer url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png" />
             <LocationPicker onPick={handlePick} />
             <FlyTo lat={lat} lng={lng} />

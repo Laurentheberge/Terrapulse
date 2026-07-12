@@ -96,10 +96,6 @@ h1, h2, h3, h4, h5, h6, .heading {
   animation: pulse-soft 2s ease-in-out infinite;
 }
 
-.animate-fade-in {
-  animation: fade-in-up 0.35s ease-out both;
-}
-
 .skeleton {
   background: linear-gradient(90deg, transparent 25%, rgba(255,255,255,0.15) 50%, transparent 75%);
   background-size: 200% 100%;
@@ -112,11 +108,7 @@ h1, h2, h3, h4, h5, h6, .heading {
   animation: shimmer 1.5s infinite;
 }
 
-*, *::before, *::after {
-  transition: background-color 0.15s ease, border-color 0.15s ease, color 0.15s ease;
-}
-
 @media (prefers-reduced-motion: reduce) {
-  *, *::before, *::after { transition: none; }
-  .animate-gradient, .animate-fade-in { animation: none; }
+  .animate-gradient, .animate-fade-in, .animate-slide-down, .animate-scale-in, .animate-slide-in-right, .animate-pulse-soft,
+  .skeleton, .dark .skeleton { animation: none; }
 }
