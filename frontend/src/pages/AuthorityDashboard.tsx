@@ -105,10 +105,15 @@ export default function AuthorityDashboard() {
     const authoritiesRes = await fetch(`${API}/auth/authorities`, {
       headers: { Authorization: `Bearer ${token}` },
     })
+    console.log("Authorities response status:", authoritiesRes.status)
     if (authoritiesRes.ok) {
+      const data = await authoritiesRes.json()
+      console.log("Authorities data:", data)
       setIsProtected(true)
-      setAuthorities(await authoritiesRes.json())
+      setAuthorities(data)
     } else {
+      const errText = await authoritiesRes.text()
+      console.warn("Authorities fetch failed:", authoritiesRes.status, errText)
       setIsProtected(false)
       setAuthorities([])
     }
