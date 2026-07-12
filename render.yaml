@@ -18,3 +18,5 @@ services:
         sync: false
       - key: FIREBASE_CLIENT_EMAIL
         sync: false
+      - key: PROTECTED_AUTHORITIES
+        value: azawelauren@gmail.com
