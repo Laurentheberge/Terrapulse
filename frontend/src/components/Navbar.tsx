@@ -43,6 +43,9 @@ export default function Navbar({ user }: NavbarProps) {
             <Link to="/sites" className="text-xs sm:text-sm text-gray-600 dark:text-gray-300 hover:text-emerald-600 dark:hover:text-emerald-400 transition-colors no-underline">
               Dump Sites
             </Link>
+            <Link to="/about" className="text-xs sm:text-sm text-gray-600 dark:text-gray-300 hover:text-emerald-600 dark:hover:text-emerald-400 transition-colors no-underline">
+              About
+            </Link>
             {user?.role === "authority" && (
               <Link to="/authority" className="text-xs sm:text-sm text-gray-600 dark:text-gray-300 hover:text-emerald-600 dark:hover:text-emerald-400 transition-colors no-underline">
                 Dashboard
