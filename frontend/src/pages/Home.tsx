@@ -29,34 +29,36 @@ export default function Home() {
   const [myReports, setMyReports] = useState<Report[]>([])
   const [loading, setLoading] = useState(true)
   const [showHelp, setShowHelp] = useState(false)
-  const [locationDenied, setLocationDenied] = useState<boolean | null>(null)
+  const [needsLocation, setNeedsLocation] = useState<boolean | null>(null)
+  const [locationBlocked, setLocationBlocked] = useState(false)
 
   useEffect(() => {
-    if (!navigator.geolocation) {
-      setLocationDenied(false)
-      return
-    }
+    if (!navigator.geolocation) { setNeedsLocation(false); return }
     if (navigator.permissions) {
       navigator.permissions.query({ name: "geolocation" }).then((p) => {
-        setLocationDenied(p.state !== "granted")
-        p.addEventListener("change", () => setLocationDenied(p.state !== "granted"))
-      }).catch(() => setLocationDenied(true))
+        setNeedsLocation(p.state !== "granted")
+        if (p.state === "denied") setLocationBlocked(true)
+        p.addEventListener("change", () => {
+          setNeedsLocation(p.state !== "granted")
+          if (p.state === "denied") setLocationBlocked(true)
+        })
+      }).catch(() => setNeedsLocation(true))
     } else {
-      setLocationDenied(true)
+      setNeedsLocation(true)
     }
   }, [])
 
   const requestLocation = () => {
     navigator.geolocation.getCurrentPosition(
-      () => setLocationDenied(false),
-      () => {
-        if (navigator.permissions) {
-          navigator.permissions.query({ name: "geolocation" }).then((p) => {
-            setLocationDenied(p.state !== "granted")
-          })
+      () => { setNeedsLocation(false); setLocationBlocked(false) },
+      (err) => {
+        if (err.code === 1) {
+          setLocationBlocked(true)
+        } else {
+          setNeedsLocation(true)
         }
       },
-      { enableHighAccuracy: true, timeout: 8000 },
+      { enableHighAccuracy: true, timeout: 15000 },
     )
   }
 
@@ -153,21 +155,25 @@ export default function Home() {
         </div>
       )}
 
-      {locationDenied === true && (
+      {needsLocation === true && (
         <div className="bg-amber-900/40 backdrop-blur-sm border border-amber-600/50 rounded-xl p-4 flex items-start gap-3 animate-fade-in">
           <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="w-5 h-5 shrink-0 mt-0.5 text-amber-400">
             <circle cx="12" cy="12" r="10" />
             <path d="M12 8v4m0 4h.01" />
           </svg>
           <div className="flex-1 min-w-0">
-            <p className="text-sm font-medium text-amber-200">Location access required</p>
-            <p className="text-xs text-amber-300/80 mt-0.5">This app uses your location to pin reports on the map and find nearby dump sites. Please enable location access in your browser settings.</p>
+            <p className="text-sm font-medium text-amber-200">{locationBlocked ? "Location is blocked" : "Location access required"}</p>
+            <p className="text-xs text-amber-300/80 mt-0.5">
+              {locationBlocked
+                ? "This app needs your location to pin reports on the map and find nearby dump sites. Please enable location in your phone or browser settings (usually a lock icon in the address bar)."
+                : "This app uses your location to pin reports on the map and find nearby dump sites."}
+            </p>
           </div>
           <button
             onClick={requestLocation}
             className="shrink-0 px-3 py-1.5 rounded-lg bg-amber-600 text-white text-xs font-medium hover:bg-amber-700 transition-colors cursor-pointer border-none active:scale-95"
           >
-            Turn on location
+            {locationBlocked ? "Open settings" : "Turn on location"}
           </button>
         </div>
       )}
