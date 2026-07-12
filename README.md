@@ -66,7 +66,6 @@ Frontend config goes in `frontend/.env`:
 │   └── app/
 │       ├── main.py    # FastAPI entrypoint
 │       ├── firebase.py# Auth middleware
-│       ├── ai.py      # analyze_image()
 │       ├── scoring.py # environment_score()
 │       ├── seed.py    # Dev seed script
 │       └── routers/   # API route modules
