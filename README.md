@@ -11,8 +11,6 @@ Environmental damage reporting platform. Citizens submit geo-tagged photos of en
 - **Poetry** (Python package manager)
 - A **Firebase** project (Firestore + Auth)
 - A **Cloudinary** account (free tier, unsigned upload preset)
-- A **Vision AI** API key (Claude or Gemini)
-
 ## Frontend
 
 ```bash
@@ -43,8 +41,7 @@ Copy `.env.example` to `.env` in `backend/` and fill in:
 | `FIREBASE_PROJECT_ID` | Firebase project ID            |
 | `FIREBASE_PRIVATE_KEY`| Firebase service account key   |
 | `FIREBASE_CLIENT_EMAIL`| Firebase service account email|
-| `CLOUDINARY_URL`      | Cloudinary URL (from dashboard)|
-| `VISION_API_KEY`      | Vision LLM provider API key    |
+| `CLOUDINARY_URL`      | Cloudinary URL provider API key    |
 
 Frontend config goes in `frontend/.env`:
 
