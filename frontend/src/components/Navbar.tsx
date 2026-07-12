@@ -115,7 +115,7 @@ export default function Navbar({ user }: NavbarProps) {
               className="p-2 rounded-lg text-gray-600 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-800 transition-colors bg-transparent border-none cursor-pointer active:scale-90"
               title="Menu"
             >
-              <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+              <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className={`transition-transform duration-300 ${menuOpen ? "rotate-90" : ""}`}>
                 {menuOpen ? (
                   <>
                     <path d="M18 6L6 18" />
@@ -136,7 +136,7 @@ export default function Navbar({ user }: NavbarProps) {
 
       {/* Mobile drawer */}
       {menuOpen && (
-        <div className="sm:hidden bg-white dark:bg-gray-900 border-t border-gray-200 dark:border-gray-800 px-4 py-3 space-y-2 animate-fade-in">
+        <div className="sm:hidden bg-white dark:bg-gray-900 border-t border-gray-200 dark:border-gray-800 px-4 py-3 space-y-2 animate-slide-down origin-top">
           <Link to="/map" onClick={closeMenu} className="block px-3 py-2 rounded-lg text-sm text-gray-700 dark:text-gray-200 hover:bg-gray-100 dark:hover:bg-gray-800 no-underline">
             Report Map
           </Link>

@@ -199,7 +199,7 @@ export default function AuthorityDashboard() {
       <img src="https://images.unsplash.com/photo-1668958728314-28cda6653610?w=1600&q=80" alt="" className="absolute inset-0 w-full h-full object-cover" />
       <div className="absolute inset-0 bg-gradient-to-br from-black/70 via-black/60 to-emerald-900/30 animate-gradient" />
       <div className="p-4 sm:p-6 max-w-7xl mx-auto relative z-10">
-      <div className="mb-6">
+      <div className="mb-6 animate-fade-in">
         <h1 className="text-2xl font-bold text-white">Authority Control Panel</h1>
         <p className="text-sm text-gray-200">Monitor hotspots and manage environmental reports</p>
       </div>
@@ -209,7 +209,7 @@ export default function AuthorityDashboard() {
           const values = [stats.open, stats.pending, stats.inProgress, stats.resolved, hotspots.length]
           const colors = ["text-gray-900 dark:text-gray-100","text-yellow-600","text-purple-600","text-green-600","text-emerald-600"]
           return (
-            <div key={label} className="bg-white dark:bg-gray-800 rounded-xl border border-gray-200 dark:border-gray-700 p-4 hover:-translate-y-1 hover:shadow-lg transition-all animate-fade-in" style={{ animationDelay: `${i * 80}ms` }}>
+            <div key={label} className="bg-white dark:bg-gray-800 rounded-xl border border-gray-200 dark:border-gray-700 p-4 hover:-translate-y-1 hover:shadow-lg transition-all animate-scale-in" style={{ animationDelay: `${i * 80}ms` }}>
               <p className={`heading text-2xl font-bold ${colors[i]}`}>{values[i]}</p>
               <p className="text-xs text-gray-500 dark:text-gray-400">{label}</p>
             </div>
@@ -318,7 +318,7 @@ export default function AuthorityDashboard() {
           </div>
         </div>
 
-        <div className="lg:col-span-2 space-y-3">
+        <div className="lg:col-span-2 space-y-3 animate-slide-in-right">
           <div className="flex gap-2">
             <select
               value={filterType}

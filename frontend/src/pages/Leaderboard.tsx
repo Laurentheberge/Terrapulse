@@ -30,7 +30,7 @@ export default function Leaderboard() {
       style={{ backgroundImage: "url(https://images.unsplash.com/photo-1618477461853-cf6ed80faba5?w=1600&q=80)", backgroundSize: "cover", backgroundPosition: "center" }}>
       <div className="absolute inset-0 bg-gradient-to-br from-black/70 via-black/60 to-emerald-900/30 animate-gradient" />
       <div className="w-full max-w-2xl relative z-10">
-        <div className="text-center mb-8">
+        <div className="text-center mb-8 animate-fade-in">
           <h1 className="text-3xl font-bold text-white">Top Reporters</h1>
           <p className="text-sm text-gray-300 mt-1">Citizens leading the charge for a cleaner environment</p>
         </div>

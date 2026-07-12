@@ -142,7 +142,7 @@ export default function Home() {
       <img src="https://images.unsplash.com/photo-1761252987156-8518404632cd?w=1600&q=80" alt="" className="absolute inset-0 w-full h-full object-cover" />
       <div className="absolute inset-0 bg-gradient-to-br from-black/70 via-black/60 to-emerald-900/30 animate-gradient" />
       <div className="max-w-5xl mx-auto px-4 py-8 space-y-8 relative z-10">
-      <div className="flex items-start justify-between">
+      <div className="flex items-start justify-between animate-fade-in">
         <div>
           <h1 className="text-2xl font-bold text-white">
             Welcome, <span className="text-emerald-300">{user?.email?.split("@")[0] || "Citizen"}</span>
@@ -202,7 +202,8 @@ export default function Home() {
       <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
         <button
           onClick={() => setShowForm(true)}
-          className="md:col-span-2 bg-gradient-to-br from-emerald-600 to-emerald-700 text-white rounded-xl p-6 text-left hover:from-emerald-500 hover:to-emerald-600 transition-all shadow-md hover:shadow-lg border-none cursor-pointer active:scale-[0.98]"
+          className="md:col-span-2 bg-gradient-to-br from-emerald-600 to-emerald-700 text-white rounded-xl p-6 text-left hover:from-emerald-500 hover:to-emerald-600 transition-all shadow-md hover:shadow-lg border-none cursor-pointer active:scale-[0.98] animate-scale-in"
+          style={{ animationDelay: "0ms" }}
         >
           <div className="flex items-center gap-3 mb-2">
             <div className="w-10 h-10 rounded-lg bg-white/20 flex items-center justify-center">
@@ -215,17 +216,17 @@ export default function Home() {
           <p className="text-sm text-emerald-100">Report environmental damage with a photo and location</p>
         </button>
 
-        <div className="bg-white dark:bg-gray-800 rounded-xl border border-gray-200 dark:border-gray-700 p-4 text-center hover:-translate-y-1 hover:shadow-lg transition-all">
+        <div className="bg-white dark:bg-gray-800 rounded-xl border border-gray-200 dark:border-gray-700 p-4 text-center hover:-translate-y-1 hover:shadow-lg transition-all animate-scale-in" style={{ animationDelay: "80ms" }}>
           <p className="heading text-2xl font-bold text-gray-900 dark:text-gray-100">{stats.total}</p>
           <p className="text-xs text-gray-500 dark:text-gray-400">Total reports</p>
         </div>
-        <div className="bg-white dark:bg-gray-800 rounded-xl border border-gray-200 dark:border-gray-700 p-4 text-center hover:-translate-y-1 hover:shadow-lg transition-all">
+        <div className="bg-white dark:bg-gray-800 rounded-xl border border-gray-200 dark:border-gray-700 p-4 text-center hover:-translate-y-1 hover:shadow-lg transition-all animate-scale-in" style={{ animationDelay: "160ms" }}>
           <p className="heading text-2xl font-bold text-yellow-600 dark:text-yellow-400">{stats.pending}</p>
           <p className="text-xs text-gray-500 dark:text-gray-400">Pending review</p>
         </div>
       </div>
 
-      <div>
+      <div className="animate-slide-in-right">
         <div className="flex items-center justify-between mb-4">
           <h2 className="text-lg font-semibold text-white">My Reports</h2>
           {myReports.length > 0 && (

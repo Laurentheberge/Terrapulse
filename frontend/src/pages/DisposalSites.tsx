@@ -90,7 +90,7 @@ export default function DisposalSites() {
       style={{ backgroundImage: "url(https://images.unsplash.com/photo-1662611527358-7855c4fe8398?w=1600&q=80)", backgroundSize: "cover", backgroundPosition: "center" }}>
       <div className="absolute inset-0 bg-black/60" />
       <div className="max-w-7xl mx-auto relative z-10">
-      <div className="mb-6">
+      <div className="mb-6 animate-fade-in">
         <h1 className="text-2xl font-bold text-white">Dump Sites</h1>
         <p className="text-sm text-gray-300">
           {loading
@@ -131,7 +131,7 @@ export default function DisposalSites() {
           </MapContainer>
         </div>
 
-        <div className="lg:col-span-2 space-y-3">
+        <div className="lg:col-span-2 space-y-3 animate-slide-in-right">
           <button
             onClick={() => setSortByDistance(!sortByDistance)}
             className={`

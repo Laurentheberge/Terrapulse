@@ -51,9 +51,49 @@ h1, h2, h3, h4, h5, h6, .heading {
   100% { background-position: 200% 0; }
 }
 
+@keyframes slide-down {
+  from { opacity: 0; transform: translateY(-16px) scaleY(0.95); }
+  to { opacity: 1; transform: translateY(0) scaleY(1); }
+}
+
+@keyframes scale-in {
+  from { opacity: 0; transform: scale(0.92); }
+  to { opacity: 1; transform: scale(1); }
+}
+
+@keyframes slide-in-right {
+  from { opacity: 0; transform: translateX(16px); }
+  to { opacity: 1; transform: translateX(0); }
+}
+
+@keyframes pulse-soft {
+  0%, 100% { transform: scale(1); }
+  50% { transform: scale(1.05); }
+}
+
 .animate-gradient {
   background-size: 200% 200%;
   animation: gradient-shift 10s ease infinite;
+}
+
+.animate-fade-in {
+  animation: fade-in-up 0.35s ease-out both;
+}
+
+.animate-slide-down {
+  animation: slide-down 0.3s ease-out both;
+}
+
+.animate-scale-in {
+  animation: scale-in 0.25s ease-out both;
+}
+
+.animate-slide-in-right {
+  animation: slide-in-right 0.3s ease-out both;
+}
+
+.animate-pulse-soft {
+  animation: pulse-soft 2s ease-in-out infinite;
 }
 
 .animate-fade-in {
