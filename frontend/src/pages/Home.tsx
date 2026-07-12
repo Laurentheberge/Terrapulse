@@ -29,6 +29,29 @@ export default function Home() {
   const [myReports, setMyReports] = useState<Report[]>([])
   const [loading, setLoading] = useState(true)
   const [showHelp, setShowHelp] = useState(false)
+  const [locationDenied, setLocationDenied] = useState(false)
+
+  useEffect(() => {
+    if (!navigator.geolocation) return
+    navigator.permissions?.query({ name: "geolocation" }).then((p) => {
+      if (p.state === "denied") setLocationDenied(true)
+      p.addEventListener("change", () => setLocationDenied(p.state === "denied"))
+    }).catch(() => {})
+  }, [])
+
+  const requestLocation = () => {
+    navigator.geolocation.getCurrentPosition(
+      () => setLocationDenied(false),
+      () => {
+        if (navigator.permissions) {
+          navigator.permissions.query({ name: "geolocation" }).then((p) => {
+            if (p.state === "denied") setLocationDenied(true)
+          })
+        }
+      },
+      { enableHighAccuracy: true, timeout: 8000 },
+    )
+  }
 
   const loadReports = async () => {
     try {
@@ -120,6 +143,25 @@ export default function Home() {
             <li><strong>Track status</strong> — Authorities review and update the status of your report.</li>
             <li><strong>View on map</strong> — All reports are visible on the public map for transparency.</li>
           </ul>
+        </div>
+      )}
+
+      {locationDenied && (
+        <div className="bg-amber-900/40 backdrop-blur-sm border border-amber-600/50 rounded-xl p-4 flex items-start gap-3 animate-fade-in">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="w-5 h-5 shrink-0 mt-0.5 text-amber-400">
+            <circle cx="12" cy="12" r="10" />
+            <path d="M12 8v4m0 4h.01" />
+          </svg>
+          <div className="flex-1 min-w-0">
+            <p className="text-sm font-medium text-amber-200">Location access required</p>
+            <p className="text-xs text-amber-300/80 mt-0.5">This app uses your location to pin reports on the map and find nearby dump sites. Please enable location access in your browser settings.</p>
+          </div>
+          <button
+            onClick={requestLocation}
+            className="shrink-0 px-3 py-1.5 rounded-lg bg-amber-600 text-white text-xs font-medium hover:bg-amber-700 transition-colors cursor-pointer border-none active:scale-95"
+          >
+            Turn on location
+          </button>
         </div>
       )}
 
