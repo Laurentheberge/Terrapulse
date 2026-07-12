@@ -32,32 +32,28 @@ export default function Navbar({ user }: NavbarProps) {
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="flex items-center justify-between h-16">
           <Link to="/" className="flex items-center gap-2 no-underline">
-            <svg width="32" height="32" viewBox="0 0 32 32" fill="none">
-              <circle cx="16" cy="16" r="14" fill="#059669" />
-              <path d="M16 6c-5.523 0-10 3.806-10 8.5 0 2.5 1.2 4.8 3.2 6.5L16 26l6.8-5c2-1.7 3.2-4 3.2-6.5C26 9.806 21.523 6 16 6z" fill="white" />
-              <path d="M18 12l-2 4h3l-2 4" stroke="#059669" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" />
-            </svg>
-            <span className="text-xl font-bold text-emerald-700 dark:text-emerald-400">TerraPulse</span>
+            <img src="/logo.png" alt="TerraPulse" className="h-8 w-8 rounded-lg object-cover" />
+            <span className="text-sm sm:text-xl font-bold font-['Montserrat'] text-emerald-700 dark:text-emerald-400">TerraPulse</span>
           </Link>
 
           <div className="flex items-center gap-2 sm:gap-4">
+            <Link to="/map" className="text-xs sm:text-sm text-gray-600 dark:text-gray-300 hover:text-emerald-600 dark:hover:text-emerald-400 transition-colors no-underline">
+              Map
+            </Link>
+            <Link to="/sites" className="text-xs sm:text-sm text-gray-600 dark:text-gray-300 hover:text-emerald-600 dark:hover:text-emerald-400 transition-colors no-underline">
+              Sites
+            </Link>
+            {user?.role === "authority" && (
+              <Link to="/authority" className="text-xs sm:text-sm text-gray-600 dark:text-gray-300 hover:text-emerald-600 dark:hover:text-emerald-400 transition-colors no-underline">
+                Dashboard
+              </Link>
+            )}
             {user ? (
               <>
-                <Link to="/map" className="text-xs sm:text-sm text-gray-600 dark:text-gray-300 hover:text-emerald-600 dark:hover:text-emerald-400 transition-colors no-underline">
-                  Map
-                </Link>
-                <Link to="/sites" className="text-xs sm:text-sm text-gray-600 dark:text-gray-300 hover:text-emerald-600 dark:hover:text-emerald-400 transition-colors no-underline">
-                  Sites
-                </Link>
-                {user.role === "authority" && (
-                  <Link to="/authority" className="text-xs sm:text-sm text-gray-600 dark:text-gray-300 hover:text-emerald-600 dark:hover:text-emerald-400 transition-colors no-underline">
-                    Dashboard
-                  </Link>
-                )}
                 <span className="hidden sm:inline text-sm text-gray-400 dark:text-gray-500 truncate max-w-[120px]">{user.email}</span>
                 <button
                   onClick={handleLogout}
-                  className="text-xs sm:text-sm text-gray-500 dark:text-gray-400 hover:text-red-600 dark:hover:text-red-400 transition-colors bg-transparent border-none cursor-pointer"
+                  className="text-xs sm:text-sm text-gray-500 dark:text-gray-400 hover:text-red-600 dark:hover:text-red-400 transition-colors bg-transparent border-none cursor-pointer active:scale-90"
                 >
                   Logout
                 </button>
@@ -70,7 +66,7 @@ export default function Navbar({ user }: NavbarProps) {
 
             <button
               onClick={() => setDark(!dark)}
-              className="p-2 rounded-lg text-gray-500 dark:text-gray-400 hover:bg-gray-100 dark:hover:bg-gray-800 transition-colors bg-transparent border-none cursor-pointer"
+              className="p-2 rounded-lg text-gray-500 dark:text-gray-400 hover:bg-gray-100 dark:hover:bg-gray-800 transition-colors bg-transparent border-none cursor-pointer active:scale-90"
               title="Toggle theme"
             >
               {dark ? (

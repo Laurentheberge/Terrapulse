@@ -8,10 +8,12 @@ export default function Register() {
   const [email, setEmail] = useState("")
   const [password, setPassword] = useState("")
   const [error, setError] = useState("")
+  const [loading, setLoading] = useState(false)
   const navigate = useNavigate()
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
+    setLoading(true)
     try {
       const cred = await createUserWithEmailAndPassword(auth, email, password)
       const token = await cred.user.getIdToken()
@@ -23,8 +25,16 @@ export default function Register() {
       await cred.user.getIdToken(true)
       navigate("/")
     } catch (err) {
-      setError(String(err).replace("Firebase: ", "").replace(/\(.*\)/, ""))
-    }
+      const msg = String(err)
+      const code = msg.match(/\((\w+\/\w+)\)/)?.[1] || ""
+      const friendly: Record<string, string> = {
+        "auth/email-already-in-use": "An account with this email already exists.",
+        "auth/invalid-email": "Invalid email format.",
+        "auth/weak-password": "Password must be at least 6 characters.",
+        "auth/too-many-requests": "Too many attempts. Try again later.",
+      }
+      setError(friendly[code] || msg.replace("Firebase: ", "").replace(/\(.*\)/, "").trim() || "Registration failed.")
+    } finally { setLoading(false) }
   }
 
   return (
@@ -33,12 +43,8 @@ export default function Register() {
       <div className="absolute inset-0 bg-black/60" />
       <div className="w-full max-w-sm relative z-10">
         <div className="text-center mb-8">
-          <div className="inline-flex items-center justify-center w-12 h-12 rounded-xl bg-emerald-500 mb-3">
-            <svg width="28" height="28" viewBox="0 0 32 32" fill="none">
-              <circle cx="16" cy="16" r="14" fill="white" />
-              <path d="M16 6c-5.523 0-10 3.806-10 8.5 0 2.5 1.2 4.8 3.2 6.5L16 26l6.8-5c2-1.7 3.2-4 3.2-6.5C26 9.806 21.523 6 16 6z" fill="#059669" />
-              <path d="M18 12l-2 4h3l-2 4" stroke="white" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" />
-            </svg>
+          <div className="inline-flex items-center justify-center w-12 h-12 rounded-xl bg-emerald-500 mb-3 overflow-hidden">
+            <img src="/logo.png" alt="TerraPulse" className="w-8 h-8 object-cover" />
           </div>
           <h1 className="text-2xl font-bold text-white">Create account</h1>
           <p className="text-sm text-gray-300 mt-1">Join TerraPulse to help protect Cameroon's environment</p>
@@ -76,9 +82,15 @@ export default function Register() {
 
           <button
             type="submit"
-            className="w-full bg-emerald-600 text-white py-2 px-4 rounded-lg text-sm font-medium hover:bg-emerald-700 transition-colors cursor-pointer"
+            disabled={loading}
+            className="w-full bg-emerald-600 text-white py-2 px-4 rounded-lg text-sm font-medium hover:bg-emerald-700 disabled:opacity-50 disabled:cursor-not-allowed transition-colors cursor-pointer flex items-center justify-center gap-2 active:scale-[0.98]"
           >
-            Create account
+            {loading ? (
+              <>
+                <div className="w-4 h-4 border-2 border-white border-t-transparent rounded-full animate-spin" />
+                Creating account...
+              </>
+            ) : "Create account"}
           </button>
 
           <p className="text-center text-sm text-gray-500 dark:text-gray-400">

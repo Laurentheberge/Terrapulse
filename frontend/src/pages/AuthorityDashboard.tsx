@@ -1,4 +1,5 @@
 import { useCallback, useEffect, useState } from "react"
+import toast from "react-hot-toast"
 import { MapContainer, TileLayer, Marker, Popup } from "react-leaflet"
 import L from "leaflet"
 import { auth } from "../firebase"
@@ -61,14 +62,16 @@ export default function AuthorityDashboard() {
   const [filterType, setFilterType] = useState("")
   const [filterStatus, setFilterStatus] = useState("")
   const [viewMode, setViewMode] = useState<"reports" | "hotspots">("hotspots")
-  const [dbg, setDbg] = useState("")
+  const [promoteEmail, setPromoteEmail] = useState("")
+  const [authorities, setAuthorities] = useState<{ uid: string; email: string }[]>([])
+  const [isProtected, setIsProtected] = useState(false)
 
   const load = useCallback(async () => {
     setLoading(true)
     const tokenResult = await auth.currentUser?.getIdTokenResult(true)
     if (tokenResult?.claims.role !== "authority") {
-      alert("Your session doesn't have authority role. Redirecting...")
-      window.location.reload()
+      toast.error("Session expired. Refreshing...")
+      setTimeout(() => window.location.reload(), 1500)
       return
     }
     const token = tokenResult.token
@@ -77,10 +80,9 @@ export default function AuthorityDashboard() {
     if (filterStatus) params.set("status", filterStatus)
     const qs = params.toString() ? `?${params}` : ""
 
-    const [reportsRes, hotspotsRes, debugRes] = await Promise.all([
+    const [reportsRes, hotspotsRes] = await Promise.all([
       fetch(`${API}/reports${qs}`, { headers: { Authorization: `Bearer ${token}` } }).catch(e => { console.error("Reports net error:", e); return null }),
       fetch(`${API}/hotspots`).catch(e => { console.error("Hotspots net error:", e); return null }),
-      fetch(`${API}/debug/reports-count`).catch(e => { console.error("Debug net error:", e); return null }),
     ])
 
     if (reportsRes?.ok) {
@@ -100,22 +102,33 @@ export default function AuthorityDashboard() {
       setHotspots([])
     }
 
-    const debugText = debugRes?.ok
-      ? "Total in DB: " + ((await debugRes.json()).total ?? "?")
-      : "debug unavailable"
-    setDbg(debugText)
-
     setLoading(false)
   }, [filterType, filterStatus])
 
   useEffect(() => { load() }, [load]) // eslint-disable-line react-hooks/set-state-in-effect
 
+  useEffect(() => {
+    (async () => {
+      const token = await auth.currentUser?.getIdToken()
+      const res = await fetch(`${API}/auth/authorities`, {
+        headers: { Authorization: `Bearer ${token}` },
+      })
+      if (res.ok) {
+        setIsProtected(true)
+        setAuthorities(await res.json())
+      } else {
+        setIsProtected(false)
+        setAuthorities([])
+      }
+    })()
+  }, [])
+
   const updateStatus = async (id: string, newStatus: string) => {
     try {
       const tokenResult = await auth.currentUser?.getIdTokenResult(true)
       if (tokenResult?.claims.role !== "authority") {
-        alert("Not authorized as authority. Refreshing...")
-        window.location.reload()
+        toast.error("Session expired. Refreshing...")
+        setTimeout(() => window.location.reload(), 1500)
         return
       }
       const res = await fetch(`${API}/reports/${id}/status?new_status=${newStatus}`, {
@@ -123,9 +136,7 @@ export default function AuthorityDashboard() {
         headers: { Authorization: `Bearer ${tokenResult.token}` },
       })
       if (!res.ok) {
-        const text = await res.text()
-        console.error("Status update failed:", res.status, text)
-        alert(`Failed to update status (${res.status})`)
+        toast.error(`Failed to update status (${res.status})`)
         return
       }
       load()
@@ -139,38 +150,93 @@ export default function AuthorityDashboard() {
     inProgress: reports.filter((r) => r.status === "in_progress").length,
   }
 
+  const handlePromote = async () => {
+    if (!promoteEmail) { toast.error("Enter an email address"); return }
+    try {
+      const token = await auth.currentUser?.getIdToken()
+      const res = await fetch(`${API}/auth/promote`, {
+        method: "POST",
+        headers: { "Content-Type": "application/json", Authorization: `Bearer ${token}` },
+        body: JSON.stringify({ email: promoteEmail }),
+      })
+      const data = await res.json()
+      if (!res.ok) {
+        toast.error(data.detail || "Failed to promote user")
+        return
+      }
+      toast.success(`${promoteEmail} promoted to authority!`)
+      setPromoteEmail("")
+    } catch {
+      toast.error("Backend not reachable. Try again.")
+    }
+  }
+
+  const handleDemote = async () => {
+    if (!promoteEmail) { toast.error("Enter an email address"); return }
+    try {
+      const token = await auth.currentUser?.getIdToken()
+      const res = await fetch(`${API}/auth/demote`, {
+        method: "POST",
+        headers: { "Content-Type": "application/json", Authorization: `Bearer ${token}` },
+        body: JSON.stringify({ email: promoteEmail }),
+      })
+      const data = await res.json()
+      if (!res.ok) {
+        toast.error(data.detail || "Failed to demote user")
+        return
+      }
+      toast.success(`${promoteEmail} demoted to citizen.`)
+      setPromoteEmail("")
+    } catch {
+      toast.error("Backend not reachable. Try again.")
+    }
+  }
+
   return (
     <div className="min-h-screen relative">
       <img src="https://images.unsplash.com/photo-1668958728314-28cda6653610?w=1600&q=80" alt="" className="absolute inset-0 w-full h-full object-cover" />
-      <div className="absolute inset-0 bg-black/60" />
+      <div className="absolute inset-0 bg-gradient-to-br from-black/70 via-black/60 to-emerald-900/30 animate-gradient" />
       <div className="p-6 max-w-7xl mx-auto relative z-10">
       <div className="mb-6">
         <h1 className="text-2xl font-bold text-white">Authority Control Panel</h1>
         <p className="text-sm text-gray-200">Monitor hotspots and manage environmental reports</p>
       </div>
 
-      {dbg && <div className="text-xs text-gray-400 bg-gray-100 dark:bg-gray-800 px-3 py-2 rounded mb-4">DBG: {dbg}</div>}
-
       <div className="grid grid-cols-2 sm:grid-cols-5 gap-4 mb-6">
-        <div className="bg-white dark:bg-gray-800 rounded-xl border border-gray-200 dark:border-gray-700 p-4">
-          <p className="text-2xl font-bold text-gray-900 dark:text-gray-100">{stats.open}</p>
-          <p className="text-xs text-gray-500 dark:text-gray-400">Open cases</p>
-        </div>
-        <div className="bg-white dark:bg-gray-800 rounded-xl border border-gray-200 dark:border-gray-700 p-4">
-          <p className="text-2xl font-bold text-yellow-600">{stats.pending}</p>
-          <p className="text-xs text-gray-500 dark:text-gray-400">Pending review</p>
-        </div>
-        <div className="bg-white dark:bg-gray-800 rounded-xl border border-gray-200 dark:border-gray-700 p-4">
-          <p className="text-2xl font-bold text-purple-600">{stats.inProgress}</p>
-          <p className="text-xs text-gray-500 dark:text-gray-400">In progress</p>
-        </div>
-        <div className="bg-white dark:bg-gray-800 rounded-xl border border-gray-200 dark:border-gray-700 p-4">
-          <p className="text-2xl font-bold text-green-600">{stats.resolved}</p>
-          <p className="text-xs text-gray-500 dark:text-gray-400">Resolved</p>
-        </div>
-        <div className="bg-white dark:bg-gray-800 rounded-xl border border-gray-200 dark:border-gray-700 p-4">
-          <p className="text-2xl font-bold text-emerald-600">{hotspots.length}</p>
-          <p className="text-xs text-gray-500 dark:text-gray-400">Hotspots</p>
+        {["Open cases","Pending review","In progress","Resolved","Hotspots"].map((label, i) => {
+          const values = [stats.open, stats.pending, stats.inProgress, stats.resolved, hotspots.length]
+          const colors = ["text-gray-900 dark:text-gray-100","text-yellow-600","text-purple-600","text-green-600","text-emerald-600"]
+          return (
+            <div key={label} className="bg-white dark:bg-gray-800 rounded-xl border border-gray-200 dark:border-gray-700 p-4 hover:-translate-y-1 hover:shadow-lg transition-all animate-fade-in" style={{ animationDelay: `${i * 80}ms` }}>
+              <p className={`heading text-2xl font-bold ${colors[i]}`}>{values[i]}</p>
+              <p className="text-xs text-gray-500 dark:text-gray-400">{label}</p>
+            </div>
+          )
+        })}
+      </div>
+
+      <div className="mb-6 bg-white dark:bg-gray-800 rounded-xl border border-gray-200 dark:border-gray-700 p-4">
+        <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">Manage authority access</label>
+        <div className="flex gap-2">
+          <input
+            type="email"
+            value={promoteEmail}
+            onChange={(e) => setPromoteEmail(e.target.value)}
+            placeholder="user@example.com"
+            className="flex-1 px-3 py-2 border border-gray-300 dark:border-gray-600 bg-gray-50 dark:bg-gray-700 text-gray-900 dark:text-gray-100 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-emerald-500"
+          />
+          <button
+            onClick={handlePromote}
+            className="shrink-0 px-4 py-2 rounded-lg bg-emerald-600 text-white text-sm font-medium hover:bg-emerald-700 cursor-pointer border-none active:scale-95 transition-all"
+          >
+            Promote
+          </button>
+          <button
+            onClick={handleDemote}
+            className="shrink-0 px-4 py-2 rounded-lg bg-red-600 text-white text-sm font-medium hover:bg-red-700 cursor-pointer border-none active:scale-95 transition-all"
+          >
+            Demote
+          </button>
         </div>
       </div>
 
@@ -179,18 +245,18 @@ export default function AuthorityDashboard() {
           <div className="flex items-center gap-2">
             <button
               onClick={() => setViewMode("hotspots")}
-              className={`px-3 py-1.5 rounded-lg text-xs font-medium transition-colors cursor-pointer border-none ${viewMode === "hotspots" ? "bg-emerald-600 text-white" : "bg-gray-100 dark:bg-gray-700 text-gray-600 dark:text-gray-300"}`}
+              className={`px-3 py-1.5 rounded-lg text-xs font-medium transition-colors cursor-pointer border-none active:scale-95 ${viewMode === "hotspots" ? "bg-emerald-600 text-white" : "bg-gray-100 dark:bg-gray-700 text-gray-600 dark:text-gray-300"}`}
             >
               Hotspot clusters
             </button>
             <button
               onClick={() => setViewMode("reports")}
-              className={`px-3 py-1.5 rounded-lg text-xs font-medium transition-colors cursor-pointer border-none ${viewMode === "reports" ? "bg-emerald-600 text-white" : "bg-gray-100 dark:bg-gray-700 text-gray-600 dark:text-gray-300"}`}
+              className={`px-3 py-1.5 rounded-lg text-xs font-medium transition-colors cursor-pointer border-none active:scale-95 ${viewMode === "reports" ? "bg-emerald-600 text-white" : "bg-gray-100 dark:bg-gray-700 text-gray-600 dark:text-gray-300"}`}
             >
               All reports
             </button>
           </div>
-          <div className="bg-white dark:bg-gray-800 rounded-xl border border-gray-200 dark:border-gray-700 overflow-hidden" style={{ height: 420 }}>
+          <div className="bg-white dark:bg-gray-800 rounded-xl border border-gray-200 dark:border-gray-700 overflow-hidden hover:shadow-lg transition-all" style={{ height: 420 }}>
             <MapContainer center={[4.0511, 9.7679]} zoom={12} className="h-full w-full" scrollWheelZoom={true}>
               <TileLayer url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png" />
               {viewMode === "hotspots" ? (
@@ -239,7 +305,7 @@ export default function AuthorityDashboard() {
             <select
               value={filterType}
               onChange={(e) => setFilterType(e.target.value)}
-              className="flex-1 px-3 py-2 border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-700 text-gray-900 dark:text-gray-100 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-emerald-500"
+              className="flex-1 px-3 py-2 border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-700 text-gray-900 dark:text-gray-100 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-emerald-500 active:scale-[0.98] transition-all"
             >
               <option value="">All types</option>
               {DAMAGE_TYPES.slice(1).map((t) => (
@@ -260,12 +326,37 @@ export default function AuthorityDashboard() {
 
           <div className="space-y-2 max-h-[360px] overflow-y-auto">
             {loading ? (
-              <p className="text-sm text-gray-300 text-center py-8">Loading...</p>
+              <div className="space-y-2">
+                {[1,2,3,4].map((i) => (
+                  <div key={i} className="bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-lg overflow-hidden animate-fade-in" style={{ animationDelay: `${i * 80}ms` }}>
+                    <div className="flex">
+                      <div className="w-16 h-16 bg-gray-200 dark:bg-gray-700 skeleton" />
+                      <div className="flex-1 p-3 space-y-2">
+                        <div className="h-3 bg-gray-200 dark:bg-gray-700 rounded w-1/3 skeleton" />
+                        <div className="h-2 bg-gray-200 dark:bg-gray-700 rounded w-1/2 skeleton" />
+                        <div className="h-6 bg-gray-200 dark:bg-gray-700 rounded w-full skeleton" />
+          </div>
+        </div>
+        {isProtected && authorities.length > 0 && (
+          <div className="mb-6 bg-white dark:bg-gray-800 rounded-xl border border-gray-200 dark:border-gray-700 p-4 animate-fade-in">
+            <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">Current authorities</label>
+            <div className="text-sm space-y-1">
+              {authorities.map((a) => (
+                <div key={a.uid} className="px-3 py-2 bg-gray-50 dark:bg-gray-700 rounded-lg text-gray-800 dark:text-gray-200">
+                  {a.email}
+                </div>
+              ))}
+            </div>
+          </div>
+        )}
+                  </div>
+                ))}
+              </div>
             ) : reports.length === 0 ? (
               <p className="text-sm text-gray-300 text-center py-8">No reports match your filters.</p>
             ) : (
-              reports.map((r) => (
-                <div key={r.id} className="bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-lg overflow-hidden">
+              reports.map((r, i) => (
+                <div key={r.id} className="bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-lg overflow-hidden hover:-translate-y-0.5 hover:shadow-md transition-all animate-fade-in" style={{ animationDelay: `${i * 60}ms` }}>
                   <div className="flex">
                     {r.image_url && (
                       <div className="w-16 h-16 shrink-0 bg-gray-100 dark:bg-gray-700">
@@ -283,7 +374,7 @@ export default function AuthorityDashboard() {
                       <select
                         value={r.status}
                         onChange={(e) => updateStatus(r.id, e.target.value)}
-                        className="mt-1.5 w-full px-2 py-1 border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-700 text-gray-900 dark:text-gray-100 rounded text-xs focus:outline-none focus:ring-1 focus:ring-emerald-500"
+                        className="mt-1.5 w-full px-2 py-1 border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-700 text-gray-900 dark:text-gray-100 rounded text-xs focus:outline-none focus:ring-1 focus:ring-emerald-500 active:scale-[0.98] transition-all"
                       >
                         {STATUSES.slice(1).map((s) => (
                           <option key={s} value={s}>{s.replace("_", " ")}</option>

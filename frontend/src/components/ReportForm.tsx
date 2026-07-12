@@ -42,12 +42,20 @@ interface ReportFormProps {
   onSuccess: () => void
 }
 
+const ICONS = {
+  illegal_dumping: <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" className="w-6 h-6 mx-auto"><path d="M3 6h18" /><path d="M8 6V4a1 1 0 011-1h6a1 1 0 011 1v2" /><path d="M19 6l-1 14a2 2 0 01-2 2H8a2 2 0 01-2-2L5 6" /><path d="M10 10v6" /><path d="M14 10v6" /></svg>,
+  flooding: <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" className="w-6 h-6 mx-auto"><path d="M12 2L2 12h3v8h4v-6h6v6h4v-8h3L12 2z" /><path d="M8 18h8" /></svg>,
+  erosion: <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" className="w-6 h-6 mx-auto"><path d="M4 20l4-8 4 4 4-8 4 12" /><path d="M2 20h20" /><path d="M12 2v6" /><path d="M9 5l3 3 3-3" /></svg>,
+  water_pollution: <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" className="w-6 h-6 mx-auto"><path d="M12 2a8 8 0 00-8 8c0 5 8 12 8 12s8-7 8-12a8 8 0 00-8-8z" /><path d="M9 9l6 6" /><path d="M15 9l-6 6" /></svg>,
+  deforestation: <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" className="w-6 h-6 mx-auto"><path d="M12 2L8 10h8L12 2z" /><path d="M12 10v10" /><path d="M4 20h16" /><path d="M8 14h8" /></svg>,
+}
+
 const DAMAGE_TYPES = [
-  { value: "illegal_dumping", label: "Illegal Dumping", icon: "🗑️" },
-  { value: "flooding", label: "Flooding", icon: "🌊" },
-  { value: "erosion", label: "Erosion", icon: "🏔️" },
-  { value: "water_pollution", label: "Water Pollution", icon: "☠️" },
-  { value: "deforestation", label: "Deforestation", icon: "🌲" },
+  { value: "illegal_dumping", label: "Illegal Dumping", icon: ICONS.illegal_dumping },
+  { value: "flooding", label: "Flooding", icon: ICONS.flooding },
+  { value: "erosion", label: "Erosion", icon: ICONS.erosion },
+  { value: "water_pollution", label: "Water Pollution", icon: ICONS.water_pollution },
+  { value: "deforestation", label: "Deforestation", icon: ICONS.deforestation },
 ]
 
 const SEVERITY_LEVELS = [
@@ -142,7 +150,7 @@ export default function ReportForm({ onSuccess }: ReportFormProps) {
             <button
               type="button"
               onClick={() => { setImageUrl(""); setImageFile(null) }}
-              className="absolute top-2 right-2 bg-black/50 text-white rounded-full w-7 h-7 flex items-center justify-center hover:bg-black/70 cursor-pointer border-none"
+              className="absolute top-2 right-2 bg-black/50 text-white rounded-full w-7 h-7 flex items-center justify-center hover:bg-black/70 cursor-pointer border-none active:scale-90 transition-all"
             >
               <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><path d="M18 6L6 18M6 6l12 12" /></svg>
             </button>
@@ -152,7 +160,7 @@ export default function ReportForm({ onSuccess }: ReportFormProps) {
             <button
               type="button"
               onClick={() => cameraRef.current?.click()}
-              className="border-2 border-dashed border-gray-300 dark:border-gray-600 rounded-lg p-6 text-center cursor-pointer hover:border-emerald-400 dark:hover:border-emerald-500 hover:bg-emerald-50 dark:hover:bg-emerald-900/20 transition-all bg-transparent"
+              className="border-2 border-dashed border-gray-300 dark:border-gray-600 rounded-lg p-6 text-center cursor-pointer hover:border-emerald-400 dark:hover:border-emerald-500 hover:bg-emerald-50 dark:hover:bg-emerald-900/20 transition-all bg-transparent active:scale-[0.97]"
             >
               <svg className="mx-auto mb-2 text-gray-400 dark:text-gray-500" width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round">
                 <path d="M23 19a2 2 0 01-2 2H3a2 2 0 01-2-2V8a2 2 0 012-2h4l2-3h6l2 3h4a2 2 0 012 2z" />
@@ -164,7 +172,7 @@ export default function ReportForm({ onSuccess }: ReportFormProps) {
             <button
               type="button"
               onClick={() => fileRef.current?.click()}
-              className="border-2 border-dashed border-gray-300 dark:border-gray-600 rounded-lg p-6 text-center cursor-pointer hover:border-emerald-400 dark:hover:border-emerald-500 hover:bg-emerald-50 dark:hover:bg-emerald-900/20 transition-all bg-transparent"
+              className="border-2 border-dashed border-gray-300 dark:border-gray-600 rounded-lg p-6 text-center cursor-pointer hover:border-emerald-400 dark:hover:border-emerald-500 hover:bg-emerald-50 dark:hover:bg-emerald-900/20 transition-all bg-transparent active:scale-[0.97]"
             >
               <svg className="mx-auto mb-2 text-gray-400 dark:text-gray-500" width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round">
                 <path d="M21 15v4a2 2 0 01-2 2H5a2 2 0 01-2-2v-4" />
@@ -208,14 +216,14 @@ export default function ReportForm({ onSuccess }: ReportFormProps) {
               key={d.value}
               type="button"
               onClick={() => setDamageType(d.value)}
-              className={`px-3 py-3 rounded-lg text-sm font-medium border transition-all cursor-pointer ${
+              className={`px-3 py-3 rounded-lg text-sm font-medium border transition-all cursor-pointer active:scale-[0.97] ${
                 damageType === d.value
                   ? "bg-emerald-50 dark:bg-emerald-900/40 border-emerald-500 text-emerald-700 dark:text-emerald-300"
                   : "bg-white dark:bg-gray-700 border-gray-200 dark:border-gray-600 text-gray-600 dark:text-gray-300 hover:border-emerald-300"
               }`}
             >
-              <span className="text-lg block mb-0.5">{d.icon}</span>
-              {d.label}
+              <div className="mb-1 text-emerald-600 dark:text-emerald-400">{d.icon}</div>
+              <span className="text-xs">{d.label}</span>
             </button>
           ))}
         </div>
@@ -229,7 +237,7 @@ export default function ReportForm({ onSuccess }: ReportFormProps) {
               key={s.value}
               type="button"
               onClick={() => setSeverity(s.value)}
-              className={`px-3 py-2.5 rounded-lg text-sm font-medium border transition-all cursor-pointer ${
+              className={`px-3 py-2.5 rounded-lg text-sm font-medium border transition-all cursor-pointer active:scale-[0.97] ${
                 severity === s.value
                   ? `${s.color} border-current`
                   : "bg-white dark:bg-gray-700 border-gray-200 dark:border-gray-600 text-gray-600 dark:text-gray-300 hover:border-gray-400"
@@ -255,7 +263,7 @@ export default function ReportForm({ onSuccess }: ReportFormProps) {
       <button
         type="submit"
         disabled={submitting}
-        className="w-full bg-emerald-600 text-white py-2.5 px-4 rounded-lg text-sm font-medium hover:bg-emerald-700 disabled:opacity-50 transition-colors cursor-pointer flex items-center justify-center gap-2"
+        className="w-full bg-emerald-600 text-white py-2.5 px-4 rounded-lg text-sm font-medium hover:bg-emerald-700 disabled:opacity-50 transition-colors cursor-pointer flex items-center justify-center gap-2 active:scale-[0.98]"
       >
         {submitting ? (
           <>

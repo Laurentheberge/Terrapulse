@@ -64,3 +64,22 @@ def demote_from_authority(body: PromoteBody, admin: User = Depends(require_autho
 
     firebase_admin_auth.set_custom_user_claims(target.uid, {"role": "citizen"})
     return {"message": f"User '{body.email}' demoted to citizen"}
+
+
+def require_protected(user: User = Depends(get_current_user)):
+    if user.email.lower() not in PROTECTED:
+        raise HTTPException(status_code=403, detail="Only the highest authority can access this.")
+    return user
+
+
+@router.get("/authorities")
+def list_authorities(admin: User = Depends(require_protected)):
+    result = []
+    page = firebase_admin_auth.list_users()
+    while page:
+        for u in page.users:
+            claims = u.custom_claims or {}
+            if claims.get("role") == "authority":
+                result.append({"uid": u.uid, "email": u.email, "email_verified": u.email_verified})
+        page = page.get_next_page() if page.has_next_page else None
+    return result

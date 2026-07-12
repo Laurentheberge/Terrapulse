@@ -117,7 +117,7 @@ export default function DisposalSites() {
                         href={directionsUrl(userPos[0], userPos[1], s.latitude, s.longitude)}
                         target="_blank"
                         rel="noopener noreferrer"
-                        className="mt-2 inline-block bg-emerald-600 text-white text-xs px-3 py-1.5 rounded-lg hover:bg-emerald-700 transition-colors no-underline"
+                        className="mt-2 inline-block bg-emerald-600 text-white text-xs px-3 py-1.5 rounded-lg hover:bg-emerald-700 transition-colors no-underline active:scale-95"
                       >
                         Get directions →
                       </a>
@@ -132,11 +132,12 @@ export default function DisposalSites() {
         <div className="lg:col-span-2 space-y-3">
           <button
             onClick={() => setSortByDistance(!sortByDistance)}
-            className={`w-full px-3 py-2 rounded-lg text-sm font-medium border transition-colors cursor-pointer ${
-              sortByDistance
+            className={`
+              w-full px-3 py-2 rounded-lg text-sm font-medium border transition-all cursor-pointer active:scale-[0.98]
+              ${sortByDistance
                 ? "bg-emerald-600 text-white border-emerald-600"
                 : "bg-white dark:bg-gray-800 text-gray-600 dark:text-gray-300 border-gray-200 dark:border-gray-700"
-            }`}
+              }`}
           >
             {userPos ? "Nearest first" : "All sites"}
           </button>
@@ -146,7 +147,7 @@ export default function DisposalSites() {
               <p className="text-sm text-gray-400 text-center py-8">No sites found.</p>
             )}
             {displaySites.map((s, i) => (
-              <div key={s.id} className="bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-lg p-4">
+              <div key={s.id} className="bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-lg p-4 hover:-translate-y-0.5 hover:shadow-md transition-all animate-fade-in" style={{ animationDelay: `${i * 60}ms` }}>
                 <div className="flex items-start gap-3">
                   <div
                     className="w-8 h-8 rounded-full flex items-center justify-center shrink-0 mt-0.5 text-white text-xs font-bold"

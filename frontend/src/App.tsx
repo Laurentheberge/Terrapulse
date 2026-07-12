@@ -1,6 +1,7 @@
 import { useEffect, useState } from "react"
 import { BrowserRouter, Routes, Route, Navigate } from "react-router-dom"
 import { onIdTokenChanged } from "firebase/auth"
+import { Toaster } from "react-hot-toast"
 import { auth } from "./firebase"
 import Navbar from "./components/Navbar"
 import ProtectedRoute from "./components/ProtectedRoute"
@@ -50,6 +51,7 @@ export default function App() {
   return (
     <BrowserRouter>
       <Navbar user={user} />
+      <Toaster position="top-right" toastOptions={{ duration: 4000, style: { fontSize: "14px" } }} />
       <Routes>
         <Route path="/login" element={user ? <Navigate to="/" replace /> : <Login />} />
         <Route path="/register" element={user ? <Navigate to="/" replace /> : <Register />} />

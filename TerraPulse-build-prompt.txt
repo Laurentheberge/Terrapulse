@@ -1,3 +1,1 @@
-Error: Failed to authenticate, have you run firebase login?
-
-Having trouble? Try firebase [command] --help
+"C:\Users\SAIYANTIC\Downloads\—Pngtree—earth globe surrounded by green_15013954-compressed.png"

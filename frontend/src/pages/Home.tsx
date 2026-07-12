@@ -1,4 +1,5 @@
 import { useCallback, useEffect, useState } from "react"
+import toast from "react-hot-toast"
 import { auth } from "../firebase"
 import API from "../api"
 import ReportForm from "../components/ReportForm"
@@ -41,20 +42,7 @@ export default function Home() {
     setLoading(false)
   }
 
-  useEffect(() => {
-    const load = async () => {
-      try {
-        const token = await auth.currentUser?.getIdToken()
-        const res = await fetch(`${API}/reports/my`, {
-          headers: { Authorization: `Bearer ${token}` },
-        })
-        const data = await res.json()
-        setMyReports(Array.isArray(data) ? data : [])
-      } catch { console.error("Failed to load reports") }
-      setLoading(false)
-    }
-    load()
-  }, [])
+  useEffect(() => { loadReports() }, []) // eslint-disable-line
 
   const updateStatus = useCallback(async (id: string) => {
     try {
@@ -65,7 +53,7 @@ export default function Home() {
       })
       if (!res.ok) {
         const text = await res.text()
-        alert(`Failed to resolve: ${res.status} ${text}`)
+        toast.error(`Failed to resolve: ${res.status} ${text}`)
         return
       }
       loadReports()
@@ -84,7 +72,7 @@ export default function Home() {
       <div className="max-w-2xl mx-auto px-4 py-8">
         <button
           onClick={() => setShowForm(false)}
-          className="flex items-center gap-1 text-sm text-gray-500 dark:text-gray-400 hover:text-gray-700 dark:hover:text-gray-200 mb-4 bg-transparent border-none cursor-pointer"
+          className="flex items-center gap-1 text-sm text-gray-500 dark:text-gray-400 hover:text-gray-700 dark:hover:text-gray-200 mb-4 bg-transparent border-none cursor-pointer active:scale-95 transition-all"
         >
           <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><path d="M19 12H5m7-7l-7 7 7 7" /></svg>
           Back to dashboard
@@ -99,7 +87,7 @@ export default function Home() {
   return (
     <div className="min-h-screen relative">
       <img src="https://images.unsplash.com/photo-1761252987156-8518404632cd?w=1600&q=80" alt="" className="absolute inset-0 w-full h-full object-cover" />
-      <div className="absolute inset-0 bg-black/60" />
+      <div className="absolute inset-0 bg-gradient-to-br from-black/70 via-black/60 to-emerald-900/30 animate-gradient" />
       <div className="max-w-5xl mx-auto px-4 py-8 space-y-8 relative z-10">
       <div className="flex items-start justify-between">
         <div>
@@ -112,7 +100,7 @@ export default function Home() {
         </div>
         <button
           onClick={() => setShowHelp(!showHelp)}
-          className="p-2 rounded-lg text-gray-300 hover:text-white hover:bg-white/10 bg-transparent border-none cursor-pointer"
+          className="p-2 rounded-lg text-gray-300 hover:text-white hover:bg-white/10 bg-transparent border-none cursor-pointer active:scale-90 transition-all"
           title="Help"
         >
           <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
@@ -138,7 +126,7 @@ export default function Home() {
       <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
         <button
           onClick={() => setShowForm(true)}
-          className="md:col-span-2 bg-gradient-to-br from-emerald-600 to-emerald-700 text-white rounded-xl p-6 text-left hover:from-emerald-500 hover:to-emerald-600 transition-all shadow-md hover:shadow-lg border-none cursor-pointer"
+          className="md:col-span-2 bg-gradient-to-br from-emerald-600 to-emerald-700 text-white rounded-xl p-6 text-left hover:from-emerald-500 hover:to-emerald-600 transition-all shadow-md hover:shadow-lg border-none cursor-pointer active:scale-[0.98]"
         >
           <div className="flex items-center gap-3 mb-2">
             <div className="w-10 h-10 rounded-lg bg-white/20 flex items-center justify-center">
@@ -146,17 +134,17 @@ export default function Home() {
                 <path d="M12 5v14m-7-7h14" />
               </svg>
             </div>
-            <span className="text-lg font-semibold">New Report</span>
+            <span className="heading text-lg font-semibold">New Report</span>
           </div>
           <p className="text-sm text-emerald-100">Report environmental damage with a photo and location</p>
         </button>
 
-        <div className="bg-white dark:bg-gray-800 rounded-xl border border-gray-200 dark:border-gray-700 p-4 text-center">
-          <p className="text-2xl font-bold text-gray-900 dark:text-gray-100">{stats.total}</p>
+        <div className="bg-white dark:bg-gray-800 rounded-xl border border-gray-200 dark:border-gray-700 p-4 text-center hover:-translate-y-1 hover:shadow-lg transition-all">
+          <p className="heading text-2xl font-bold text-gray-900 dark:text-gray-100">{stats.total}</p>
           <p className="text-xs text-gray-500 dark:text-gray-400">Total reports</p>
         </div>
-        <div className="bg-white dark:bg-gray-800 rounded-xl border border-gray-200 dark:border-gray-700 p-4 text-center">
-          <p className="text-2xl font-bold text-yellow-600 dark:text-yellow-400">{stats.pending}</p>
+        <div className="bg-white dark:bg-gray-800 rounded-xl border border-gray-200 dark:border-gray-700 p-4 text-center hover:-translate-y-1 hover:shadow-lg transition-all">
+          <p className="heading text-2xl font-bold text-yellow-600 dark:text-yellow-400">{stats.pending}</p>
           <p className="text-xs text-gray-500 dark:text-gray-400">Pending review</p>
         </div>
       </div>
@@ -170,9 +158,19 @@ export default function Home() {
         </div>
 
         {loading ? (
-          <div className="text-center py-12">
-            <div className="inline-block w-6 h-6 border-2 border-emerald-500 border-t-transparent rounded-full animate-spin" />
-            <p className="text-sm text-gray-400 mt-2">Loading your reports...</p>
+          <div className="space-y-3">
+            {[1,2,3].map((i) => (
+              <div key={i} className="bg-white dark:bg-gray-800 rounded-xl border border-gray-200 dark:border-gray-700 overflow-hidden animate-fade-in" style={{ animationDelay: `${i * 100}ms` }}>
+                <div className="flex">
+                  <div className="w-24 h-24 bg-gray-200 dark:bg-gray-700 skeleton" />
+                  <div className="flex-1 p-4 space-y-2">
+                    <div className="h-4 bg-gray-200 dark:bg-gray-700 rounded w-1/3 skeleton" />
+                    <div className="h-3 bg-gray-200 dark:bg-gray-700 rounded w-2/3 skeleton" />
+                    <div className="h-3 bg-gray-200 dark:bg-gray-700 rounded w-1/4 skeleton" />
+                  </div>
+                </div>
+              </div>
+            ))}
           </div>
         ) : myReports.length === 0 ? (
           <div className="bg-white dark:bg-gray-800 rounded-xl border border-gray-200 dark:border-gray-700 p-12 text-center">
@@ -184,8 +182,8 @@ export default function Home() {
           </div>
         ) : (
           <div className="space-y-3">
-            {myReports.map((r) => (
-              <div key={r.id} className="bg-white dark:bg-gray-800 rounded-xl border border-gray-200 dark:border-gray-700 overflow-hidden hover:shadow-md transition-shadow">
+            {myReports.map((r, i) => (
+              <div key={r.id} className="bg-white dark:bg-gray-800 rounded-xl border border-gray-200 dark:border-gray-700 overflow-hidden hover:-translate-y-1 hover:shadow-lg transition-all animate-fade-in" style={{ animationDelay: `${i * 80}ms` }}>
                 <div className="flex">
                   {r.image_url && (
                     <div className="w-24 h-24 shrink-0 bg-gray-100 dark:bg-gray-700">
@@ -211,7 +209,7 @@ export default function Home() {
                       {r.status !== "resolved" && r.status !== "rejected" && (
                         <button
                           onClick={() => updateStatus(r.id)}
-                          className="ml-auto px-2 py-0.5 rounded bg-emerald-100 text-emerald-700 dark:bg-emerald-900 dark:text-emerald-300 hover:bg-emerald-200 dark:hover:bg-emerald-800 font-medium border-none cursor-pointer"
+                          className="ml-auto px-2 py-0.5 rounded bg-emerald-100 text-emerald-700 dark:bg-emerald-900 dark:text-emerald-300 hover:bg-emerald-200 dark:hover:bg-emerald-800 font-medium border-none cursor-pointer active:scale-95 transition-all"
                         >
                           Mark resolved
                         </button>
