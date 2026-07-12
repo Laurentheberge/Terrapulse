@@ -42,12 +42,6 @@ def promote_to_authority(body: PromoteBody, admin: User = Depends(require_author
     except firebase_admin_auth.UserNotFoundError:
         raise HTTPException(status_code=404, detail="No user found with that email")
 
-    if not target.email_verified:
-        raise HTTPException(
-            status_code=400,
-            detail="User's email is not verified. Ask them to verify their email before promoting.",
-        )
-
     firebase_admin_auth.set_custom_user_claims(target.uid, {"role": "authority"})
     return {"message": f"User '{body.email}' promoted to authority"}
 
