@@ -10,6 +10,7 @@ import Login from "./pages/Login"
 import Register from "./pages/Register"
 import PublicMap from "./pages/PublicMap"
 import DisposalSites from "./pages/DisposalSites"
+import Leaderboard from "./pages/Leaderboard"
 import About from "./pages/About"
 import AuthorityDashboard from "./pages/AuthorityDashboard"
 import "leaflet/dist/leaflet.css"
@@ -59,6 +60,7 @@ export default function App() {
         <Route path="/" element={<ProtectedRoute user={user}><Home /></ProtectedRoute>} />
         <Route path="/map" element={<PublicMap />} />
         <Route path="/sites" element={<DisposalSites />} />
+        <Route path="/leaderboard" element={<Leaderboard />} />
         <Route path="/about" element={<About />} />
         <Route
           path="/authority"

@@ -3,7 +3,7 @@ from fastapi import FastAPI
 from starlette.responses import PlainTextResponse
 
 from app.firebase import db
-from app.routers import auth, hotspots, reports, sites
+from app.routers import auth, hotspots, leaderboard, reports, sites
 
 app = FastAPI(title="TerraPulse AI")
 
@@ -35,6 +35,7 @@ async def cors_middleware(request, call_next):
 app.include_router(auth.router)
 app.include_router(reports.router)
 app.include_router(hotspots.router)
+app.include_router(leaderboard.router)
 app.include_router(sites.router)
 
 
