@@ -34,8 +34,12 @@ function haversineKm(lat1: number, lng1: number, lat2: number, lng2: number) {
   return R * 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a))
 }
 
-function directionsUrl(fromLat: number, fromLng: number, toLat: number, toLng: number) {
-  return `https://www.openstreetmap.org/directions?from=${fromLat}%2C${fromLng}&to=${toLat}%2C${toLng}#map=15/${toLat}/${toLng}`
+function directionsUrl(fromLat: number | null, fromLng: number | null, toLat: number, toLng: number) {
+  const to = `${toLat},${toLng}`
+  if (fromLat !== null && fromLng !== null) {
+    return `https://www.openstreetmap.org/directions?from=${fromLat}%2C${fromLng}&to=${to}#map=15/${toLat}/${toLng}`
+  }
+  return `https://www.openstreetmap.org/directions?to=${to}#map=15/${toLat}/${toLng}`
 }
 
 interface Site {
@@ -112,16 +116,14 @@ export default function DisposalSites() {
                     {s.distance !== undefined && (
                       <p className="text-xs text-emerald-600 font-medium mt-1">{s.distance.toFixed(1)} km away</p>
                     )}
-                    {userPos && (
-                      <a
-                        href={directionsUrl(userPos[0], userPos[1], s.latitude, s.longitude)}
-                        target="_blank"
-                        rel="noopener noreferrer"
-                        className="mt-2 inline-block bg-emerald-600 text-white text-xs px-3 py-1.5 rounded-lg hover:bg-emerald-700 transition-colors no-underline active:scale-95"
-                      >
-                        Get directions →
-                      </a>
-                    )}
+                    <a
+                      href={directionsUrl(userPos?.[0] ?? null, userPos?.[1] ?? null, s.latitude, s.longitude)}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="mt-2 inline-block bg-emerald-600 text-white text-xs px-3 py-1.5 rounded-lg hover:bg-emerald-700 transition-colors no-underline active:scale-95"
+                    >
+                      Get directions →
+                    </a>
                   </div>
                 </Popup>
               </Marker>
@@ -147,14 +149,14 @@ export default function DisposalSites() {
               <p className="text-sm text-gray-400 text-center py-8">No sites found.</p>
             )}
             {displaySites.map((s, i) => {
-              const link = userPos ? directionsUrl(userPos[0], userPos[1], s.latitude, s.longitude) : null
+              const link = directionsUrl(userPos?.[0] ?? null, userPos?.[1] ?? null, s.latitude, s.longitude)
               return (
                 <a
                   key={s.id}
-                  href={link || "#"}
-                  target={link ? "_blank" : undefined}
-                  rel={link ? "noopener noreferrer" : undefined}
-                  className={`block bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-lg p-4 hover:-translate-y-0.5 hover:shadow-md transition-all animate-fade-in no-underline ${link ? "cursor-pointer" : "cursor-default"}`}
+                  href={link}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="block bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-lg p-4 hover:-translate-y-0.5 hover:shadow-md transition-all animate-fade-in no-underline cursor-pointer"
                   style={{ animationDelay: `${i * 60}ms` }}
                 >
                   <div className="flex items-start gap-3">
@@ -172,11 +174,9 @@ export default function DisposalSites() {
                         <p className="text-xs text-emerald-600 font-medium mt-0.5">{s.distance.toFixed(1)} km</p>
                       )}
                     </div>
-                    {link && (
-                      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="w-5 h-5 shrink-0 mt-1 text-emerald-600 dark:text-emerald-400">
-                        <path d="M9 18l6-6-6-6" />
-                      </svg>
-                    )}
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="w-5 h-5 shrink-0 mt-1 text-emerald-600 dark:text-emerald-400">
+                      <path d="M9 18l6-6-6-6" />
+                    </svg>
                   </div>
                 </a>
               )
