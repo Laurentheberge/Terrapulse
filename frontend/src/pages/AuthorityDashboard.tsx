@@ -102,26 +102,21 @@ export default function AuthorityDashboard() {
       setHotspots([])
     }
 
+    const authoritiesRes = await fetch(`${API}/auth/authorities`, {
+      headers: { Authorization: `Bearer ${token}` },
+    })
+    if (authoritiesRes.ok) {
+      setIsProtected(true)
+      setAuthorities(await authoritiesRes.json())
+    } else {
+      setIsProtected(false)
+      setAuthorities([])
+    }
+
     setLoading(false)
   }, [filterType, filterStatus])
 
   useEffect(() => { load() }, [load]) // eslint-disable-line react-hooks/set-state-in-effect
-
-  useEffect(() => {
-    (async () => {
-      const token = await auth.currentUser?.getIdToken()
-      const res = await fetch(`${API}/auth/authorities`, {
-        headers: { Authorization: `Bearer ${token}` },
-      })
-      if (res.ok) {
-        setIsProtected(true)
-        setAuthorities(await res.json())
-      } else {
-        setIsProtected(false)
-        setAuthorities([])
-      }
-    })()
-  }, [])
 
   const updateStatus = async (id: string, newStatus: string) => {
     try {
@@ -166,6 +161,7 @@ export default function AuthorityDashboard() {
       }
       toast.success(`${promoteEmail} promoted to authority!`)
       setPromoteEmail("")
+      load()
     } catch {
       toast.error("Backend not reachable. Try again.")
     }
@@ -187,6 +183,7 @@ export default function AuthorityDashboard() {
       }
       toast.success(`${promoteEmail} demoted to citizen.`)
       setPromoteEmail("")
+      load()
     } catch {
       toast.error("Backend not reachable. Try again.")
     }
