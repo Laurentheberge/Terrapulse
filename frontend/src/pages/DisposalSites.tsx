@@ -146,41 +146,41 @@ export default function DisposalSites() {
             {displaySites.length === 0 && (
               <p className="text-sm text-gray-400 text-center py-8">No sites found.</p>
             )}
-            {displaySites.map((s, i) => (
-              <div key={s.id} className="bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-lg p-4 hover:-translate-y-0.5 hover:shadow-md transition-all animate-fade-in" style={{ animationDelay: `${i * 60}ms` }}>
-                <div className="flex items-start gap-3">
-                  <div
-                    className="w-8 h-8 rounded-full flex items-center justify-center shrink-0 mt-0.5 text-white text-xs font-bold"
-                    style={{ background: typeIcons[s.type]?.color || "#6b7280" }}
-                  >
-                    {i + 1}
-                  </div>
-                  <div className="flex-1 min-w-0">
-                    <p className="text-sm font-medium text-gray-900 dark:text-gray-100 truncate">{s.name}</p>
-                    <p className="text-xs text-gray-400 capitalize">{typeIcons[s.type]?.label || s.type}</p>
-                    <p className="text-xs text-gray-400">{s.hours}</p>
-                    {s.distance !== undefined && (
-                      <p className="text-xs text-emerald-600 font-medium mt-0.5">{s.distance.toFixed(1)} km</p>
+            {displaySites.map((s, i) => {
+              const link = userPos ? directionsUrl(userPos[0], userPos[1], s.latitude, s.longitude) : null
+              return (
+                <a
+                  key={s.id}
+                  href={link || "#"}
+                  target={link ? "_blank" : undefined}
+                  rel={link ? "noopener noreferrer" : undefined}
+                  className={`block bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-lg p-4 hover:-translate-y-0.5 hover:shadow-md transition-all animate-fade-in no-underline ${link ? "cursor-pointer" : "cursor-default"}`}
+                  style={{ animationDelay: `${i * 60}ms` }}
+                >
+                  <div className="flex items-start gap-3">
+                    <div
+                      className="w-8 h-8 rounded-full flex items-center justify-center shrink-0 mt-0.5 text-white text-xs font-bold"
+                      style={{ background: typeIcons[s.type]?.color || "#6b7280" }}
+                    >
+                      {i + 1}
+                    </div>
+                    <div className="flex-1 min-w-0">
+                      <p className="text-sm font-medium text-gray-900 dark:text-gray-100 truncate">{s.name}</p>
+                      <p className="text-xs text-gray-400 capitalize">{typeIcons[s.type]?.label || s.type}</p>
+                      <p className="text-xs text-gray-400">{s.hours}</p>
+                      {s.distance !== undefined && (
+                        <p className="text-xs text-emerald-600 font-medium mt-0.5">{s.distance.toFixed(1)} km</p>
+                      )}
+                    </div>
+                    {link && (
+                      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="w-5 h-5 shrink-0 mt-1 text-emerald-600 dark:text-emerald-400">
+                        <path d="M9 18l6-6-6-6" />
+                      </svg>
                     )}
                   </div>
-                  <div className="shrink-0">
-                    {userPos && (
-                      <a
-                        href={directionsUrl(userPos[0], userPos[1], s.latitude, s.longitude)}
-                        target="_blank"
-                        rel="noopener noreferrer"
-                        className="inline-flex items-center justify-center w-8 h-8 rounded-lg bg-emerald-50 dark:bg-emerald-900 text-emerald-600 dark:text-emerald-300 hover:bg-emerald-100 dark:hover:bg-emerald-800 transition-colors no-underline"
-                        title="Get directions"
-                      >
-                        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-                          <path d="M9 18l6-6-6-6" />
-                        </svg>
-                      </a>
-                    )}
-                  </div>
-                </div>
-              </div>
-            ))}
+                </a>
+              )
+            })}
           </div>
         </div>
       </div>
