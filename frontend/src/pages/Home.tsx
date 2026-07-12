@@ -29,14 +29,21 @@ export default function Home() {
   const [myReports, setMyReports] = useState<Report[]>([])
   const [loading, setLoading] = useState(true)
   const [showHelp, setShowHelp] = useState(false)
-  const [locationDenied, setLocationDenied] = useState(false)
+  const [locationDenied, setLocationDenied] = useState<boolean | null>(null)
 
   useEffect(() => {
-    if (!navigator.geolocation) return
-    navigator.permissions?.query({ name: "geolocation" }).then((p) => {
-      if (p.state === "denied") setLocationDenied(true)
-      p.addEventListener("change", () => setLocationDenied(p.state === "denied"))
-    }).catch(() => {})
+    if (!navigator.geolocation) {
+      setLocationDenied(false)
+      return
+    }
+    if (navigator.permissions) {
+      navigator.permissions.query({ name: "geolocation" }).then((p) => {
+        setLocationDenied(p.state !== "granted")
+        p.addEventListener("change", () => setLocationDenied(p.state !== "granted"))
+      }).catch(() => setLocationDenied(true))
+    } else {
+      setLocationDenied(true)
+    }
   }, [])
 
   const requestLocation = () => {
@@ -45,7 +52,7 @@ export default function Home() {
       () => {
         if (navigator.permissions) {
           navigator.permissions.query({ name: "geolocation" }).then((p) => {
-            if (p.state === "denied") setLocationDenied(true)
+            setLocationDenied(p.state !== "granted")
           })
         }
       },
@@ -146,7 +153,7 @@ export default function Home() {
         </div>
       )}
 
-      {locationDenied && (
+      {locationDenied === true && (
         <div className="bg-amber-900/40 backdrop-blur-sm border border-amber-600/50 rounded-xl p-4 flex items-start gap-3 animate-fade-in">
           <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="w-5 h-5 shrink-0 mt-0.5 text-amber-400">
             <circle cx="12" cy="12" r="10" />
