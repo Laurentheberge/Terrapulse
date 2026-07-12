@@ -67,11 +67,16 @@ export default function Home() {
       () => { setNeedsLocation(false); setLocationBlocked(false) },
       () => {
         const isIOS = /iPad|iPhone|iPod/.test(navigator.userAgent)
+        const isAndroid = /Android/.test(navigator.userAgent)
         if (isIOS) {
           window.location.href = "app-settings:"
+        } else if (isAndroid) {
+          window.location.href = "intent://settings/location#Intent;scheme=chrome;package=com.android.chrome;end"
+          setTimeout(() => {
+            toast.success("Lock icon in address bar → Site settings → Location → Allow", { duration: 6000 })
+          }, 800)
         } else {
-          toast("Refreshing to request location again...", { duration: 2000 })
-          setTimeout(() => window.location.reload(), 1500)
+          window.location.reload()
         }
       },
       { enableHighAccuracy: true, timeout: 15000 },
