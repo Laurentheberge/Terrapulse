@@ -112,7 +112,7 @@ export default function PublicMap() {
       <div className="bg-white dark:bg-gray-900 border-b border-gray-200 dark:border-gray-800 px-6 py-3">
         <div className="flex items-center justify-between">
           <div>
-            <h1 className="text-lg font-semibold text-gray-900 dark:text-gray-100">Environmental Reports Map</h1>
+            <h1 className="text-lg font-semibold text-gray-900 dark:text-gray-100">Report Map</h1>
             <p className="text-sm text-gray-500 dark:text-gray-400">{loading ? "Loading..." : `${reports.length} reports across Cameroon`}</p>
           </div>
           <div className="flex items-center gap-3 text-xs">

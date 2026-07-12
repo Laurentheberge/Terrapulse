@@ -87,7 +87,7 @@ export default function DisposalSites() {
       <div className="absolute inset-0 bg-black/60" />
       <div className="max-w-7xl mx-auto relative z-10">
       <div className="mb-6">
-        <h1 className="text-2xl font-bold text-white">Disposal & Recycling Sites</h1>
+        <h1 className="text-2xl font-bold text-white">Dump Sites</h1>
         <p className="text-sm text-gray-300">
           {loading
             ? "Loading..."
