@@ -7,9 +7,9 @@ export default function HelpWidget() {
   const [open, setOpen] = useState(false)
 
   return (
-    <div className="fixed bottom-5 right-5 z-50 flex flex-col items-end gap-2">
+    <div className="fixed bottom-5 right-5 z-50 flex flex-col items-center gap-1">
       {open && (
-        <div className="bg-white dark:bg-gray-800 rounded-2xl shadow-xl border border-gray-200 dark:border-gray-700 p-4 w-64 animate-scale-in origin-bottom-right">
+        <div className="bg-white dark:bg-gray-800 rounded-2xl shadow-xl border border-gray-200 dark:border-gray-700 p-4 w-64 animate-scale-in origin-bottom-right mb-1">
           <p className="text-sm font-semibold text-gray-900 dark:text-gray-100 mb-3">Need help?</p>
 
           <a
@@ -32,15 +32,14 @@ export default function HelpWidget() {
 
       <button
         onClick={() => setOpen(v => !v)}
-        className="w-12 h-12 rounded-full bg-emerald-600 hover:bg-emerald-500 text-white shadow-lg flex items-center justify-center cursor-pointer border-none active:scale-90 transition-all"
-        aria-label="Help"
+        className="w-14 h-14 rounded-full bg-emerald-600 hover:bg-emerald-500 text-white shadow-lg flex items-center justify-center cursor-pointer border-none active:scale-90 transition-all"
+        aria-label="Customer Support"
       >
-        {open ? (
-          <svg className="w-5 h-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5"><path d="M18 6L6 18M6 6l12 12"/></svg>
-        ) : (
-          <svg className="w-5 h-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><path d="M21 15a2 2 0 01-2 2H7l-4 4V5a2 2 0 012-2h14a2 2 0 012 2z"/></svg>
-        )}
+        <svg className="w-6 h-6" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round">
+          <path d="M21 12a9 9 0 00-9-9m9 9v4a2 2 0 01-2 2h-1a2 2 0 01-2-2v-3a2 2 0 012-2h3zM3 12a9 9 0 019-9m-9 9v4a2 2 0 002 2h1a2 2 0 002-2v-3a2 2 0 00-2-2H3z" />
+        </svg>
       </button>
+      <span className="text-[10px] font-medium text-gray-400 dark:text-gray-500 tracking-wide">Customer Support</span>
     </div>
   )
 }
