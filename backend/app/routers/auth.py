@@ -1,8 +1,12 @@
+import os
+
 from pydantic import BaseModel
 from fastapi import APIRouter, Depends, HTTPException, status
 
 from app.auth import User, get_current_user, require_authority
 from app.firebase import auth as firebase_admin_auth
+
+PROTECTED = {e.strip().lower() for e in os.environ.get("PROTECTED_AUTHORITIES", "").split(",") if e.strip()}
 
 router = APIRouter(prefix="/auth", tags=["auth"])
 
@@ -54,6 +58,9 @@ def demote_from_authority(body: PromoteBody, admin: User = Depends(require_autho
         target = firebase_admin_auth.get_user_by_email(body.email)
     except firebase_admin_auth.UserNotFoundError:
         raise HTTPException(status_code=404, detail="No user found with that email")
+
+    if target.email.lower() in PROTECTED:
+        raise HTTPException(status_code=403, detail="This user is protected and cannot be demoted.")
 
     firebase_admin_auth.set_custom_user_claims(target.uid, {"role": "citizen"})
     return {"message": f"User '{body.email}' demoted to citizen"}
