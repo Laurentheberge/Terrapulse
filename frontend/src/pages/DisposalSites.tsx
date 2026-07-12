@@ -98,7 +98,7 @@ export default function DisposalSites() {
       </div>
 
       <div className="grid grid-cols-1 lg:grid-cols-5 gap-6">
-        <div className="lg:col-span-3 bg-white dark:bg-gray-800 rounded-xl border border-gray-200 dark:border-gray-700 overflow-hidden" style={{ height: 500 }}>
+        <div className="lg:col-span-3 bg-white dark:bg-gray-800 rounded-xl border border-gray-200 dark:border-gray-700 overflow-hidden h-[45vh] sm:h-[500px]">
           <MapContainer center={userPos || [4.0511, 9.7679]} zoom={userPos ? 13 : 7} className="h-full w-full" scrollWheelZoom={true}>
             <TileLayer url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png" />
             {userPos && <Marker position={userPos} icon={userIcon} />}

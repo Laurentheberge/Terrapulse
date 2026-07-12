@@ -202,7 +202,7 @@ export default function Home() {
                         {r.status?.replace("_", " ")}
                       </span>
                     </div>
-                    <div className="flex items-center gap-3 mt-2 text-xs text-gray-400 dark:text-gray-500">
+                    <div className="flex items-center gap-3 mt-2 text-xs text-gray-400 dark:text-gray-500 flex-wrap">
                       <span>Score: {r.environment_score}</span>
                       {r.severity_level && <span className="capitalize">Severity: {r.severity_level}</span>}
                       {r.created_at && <span>{new Date(r.created_at).toLocaleDateString()}</span>}

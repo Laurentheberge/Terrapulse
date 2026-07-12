@@ -109,13 +109,13 @@ export default function PublicMap() {
 
   return (
     <div className="h-[calc(100vh-4rem)] flex flex-col">
-      <div className="bg-white dark:bg-gray-900 border-b border-gray-200 dark:border-gray-800 px-6 py-3">
-        <div className="flex items-center justify-between">
+      <div className="bg-white dark:bg-gray-900 border-b border-gray-200 dark:border-gray-800 px-4 sm:px-6 py-3">
+        <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2">
           <div>
-            <h1 className="text-lg font-semibold text-gray-900 dark:text-gray-100">Report Map</h1>
-            <p className="text-sm text-gray-500 dark:text-gray-400">{loading ? "Loading..." : `${reports.length} reports across Cameroon`}</p>
+            <h1 className="text-base sm:text-lg font-semibold text-gray-900 dark:text-gray-100">Report Map</h1>
+            <p className="text-xs sm:text-sm text-gray-500 dark:text-gray-400">{loading ? "Loading..." : `${reports.length} reports across Cameroon`}</p>
           </div>
-          <div className="flex items-center gap-3 text-xs">
+          <div className="flex items-center gap-3 text-xs flex-wrap">
             <div className="flex items-center gap-1.5">
               <span className="w-3 h-3 rounded-full bg-red-500 inline-block" />
               <span className="text-gray-500 dark:text-gray-400">High</span>

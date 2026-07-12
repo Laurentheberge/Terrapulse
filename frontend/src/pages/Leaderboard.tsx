@@ -52,7 +52,13 @@ export default function Leaderboard() {
         ) : (
           <div className="bg-white/95 dark:bg-gray-900/95 backdrop-blur-sm rounded-xl border border-gray-200 dark:border-gray-700 overflow-hidden">
             {entries.map((entry, i) => {
-              const medal = i === 0 ? "🥇" : i === 1 ? "🥈" : i === 2 ? "🥉" : ""
+              const medal = i === 0 ? (
+                <svg viewBox="0 0 24 24" fill="none" stroke="#f59e0b" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="w-5 h-5 mx-auto"><circle cx="12" cy="8" r="4"/><path d="M12 12v4"/><path d="M16 20l-4-2-4 2V12h8z"/></svg>
+              ) : i === 1 ? (
+                <svg viewBox="0 0 24 24" fill="none" stroke="#94a3b8" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="w-5 h-5 mx-auto"><circle cx="12" cy="8" r="4"/><path d="M12 12v4"/><path d="M16 20l-4-2-4 2V12h8z"/></svg>
+              ) : i === 2 ? (
+                <svg viewBox="0 0 24 24" fill="none" stroke="#d97706" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="w-5 h-5 mx-auto"><circle cx="12" cy="8" r="4"/><path d="M12 12v4"/><path d="M16 20l-4-2-4 2V12h8z"/></svg>
+              ) : ""
               return (
                 <div
                   key={entry.uid}

@@ -198,7 +198,7 @@ export default function AuthorityDashboard() {
     <div className="min-h-screen relative">
       <img src="https://images.unsplash.com/photo-1668958728314-28cda6653610?w=1600&q=80" alt="" className="absolute inset-0 w-full h-full object-cover" />
       <div className="absolute inset-0 bg-gradient-to-br from-black/70 via-black/60 to-emerald-900/30 animate-gradient" />
-      <div className="p-6 max-w-7xl mx-auto relative z-10">
+      <div className="p-4 sm:p-6 max-w-7xl mx-auto relative z-10">
       <div className="mb-6">
         <h1 className="text-2xl font-bold text-white">Authority Control Panel</h1>
         <p className="text-sm text-gray-200">Monitor hotspots and manage environmental reports</p>
@@ -219,7 +219,7 @@ export default function AuthorityDashboard() {
 
       <div className="mb-6 bg-white dark:bg-gray-800 rounded-xl border border-gray-200 dark:border-gray-700 p-4">
         <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">Manage authority access</label>
-        <div className="flex gap-2 relative">
+        <div className="flex flex-col sm:flex-row gap-2 relative">
           <div className="flex-1 relative group">
             <input
               type="email"
@@ -274,7 +274,7 @@ export default function AuthorityDashboard() {
               All reports
             </button>
           </div>
-          <div className="bg-white dark:bg-gray-800 rounded-xl border border-gray-200 dark:border-gray-700 overflow-hidden hover:shadow-lg transition-all" style={{ height: 420 }}>
+          <div className="bg-white dark:bg-gray-800 rounded-xl border border-gray-200 dark:border-gray-700 overflow-hidden hover:shadow-lg transition-all h-[40vh] sm:h-[420px]">
             <MapContainer center={[4.0511, 9.7679]} zoom={12} className="h-full w-full" scrollWheelZoom={true}>
               <TileLayer url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png" />
               {viewMode === "hotspots" ? (
