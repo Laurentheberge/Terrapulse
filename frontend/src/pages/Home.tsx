@@ -62,6 +62,22 @@ export default function Home() {
     )
   }
 
+  const openLocationSettings = () => {
+    navigator.geolocation.getCurrentPosition(
+      () => { setNeedsLocation(false); setLocationBlocked(false) },
+      () => {
+        const isIOS = /iPad|iPhone|iPod/.test(navigator.userAgent)
+        if (isIOS) {
+          window.location.href = "app-settings:"
+        } else {
+          toast("Refreshing to request location again...", { duration: 2000 })
+          setTimeout(() => window.location.reload(), 1500)
+        }
+      },
+      { enableHighAccuracy: true, timeout: 15000 },
+    )
+  }
+
   const loadReports = async () => {
     try {
       const token = await auth.currentUser?.getIdToken()
@@ -170,7 +186,7 @@ export default function Home() {
             </p>
           </div>
           <button
-            onClick={requestLocation}
+            onClick={locationBlocked ? openLocationSettings : requestLocation}
             className="shrink-0 px-3 py-1.5 rounded-lg bg-amber-600 text-white text-xs font-medium hover:bg-amber-700 transition-colors cursor-pointer border-none active:scale-95"
           >
             {locationBlocked ? "Open settings" : "Turn on location"}
