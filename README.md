@@ -1,6 +1,6 @@
 # TerraPulse
 
-Environmental damage reporting platform. Citizens submit geo-tagged photos of environmental issues (illegal dumping, flooding, erosion, water pollution, deforestation). AI classifies severity, reports appear on a live hotspot map, and authorities prioritize via a scoring dashboard.
+Environmental damage reporting platform. Citizens submit geo-tagged photos of environmental issues (illegal dumping, flooding, erosion, water pollution, deforestation). User classifies severity, reports appear on a live hotspot map, and authorities prioritize via a scoring dashboard.
 
 ---
 
